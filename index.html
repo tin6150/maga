@@ -1,0 +1,36 @@
+<HTML>
+
+Make America Great Again!
+
+This election cycle, please be sure and go vote.
+
+Peace. Freedom.  Tolerance.  Progress.
+<!--
+MAGA2020
+
+
+server_cifs VDM2 -J compname=VDM2,domain=fr.gap.net,admin=engineer,ou="ou=Servers:Resources:FCUK"
+server_cifs VDM2 -J compname=uk-r66,domain=uk.gap.net,admin=installer,ou="ou=Servers:Resources:ENUK"
+server_cifs VDM2 -J compname=uk-r66,domain=uk.gap.net,admin=administrator,ou="cn=Servers:cn=Resources:ou=FCUK"
+server_cifs VDM2 -J compname=server2,domain=uk.gap.net,admin=engins,ou="cn=Servers:cn=Resources:ou=ZJCN"
+
+exact username and ou path depends on your AD tree design.
+in test Windom 
+eng/ins acc don't cut it, cuz need an admin user account with (essentially) 
+full Windom priv
+
+# there is option to reset password if account password has changed but want to use same credential/object again...  best to  resetserverpasswd
+
+
+other troubleshooting commands:
+... server_kerberos -keytab ...
+server_cifssupport VDM2 -cred -name WinUsername -domain winDom   # use test domain user credentials
+server_cifssupport VDM2 -cred -name Installer   -domain winDom   # use prod domain user credentials
+
+
+server_viruschk server_4        # check to see if CAVA is working for a specific data mover
+
+
+maga2020
+-->
+</HTML>
