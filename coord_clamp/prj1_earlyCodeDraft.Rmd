@@ -26,17 +26,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## install pacman to help manage installation and loading of additional libraries
     
-    Optional part, and it may not play well with knit :-\
+    Optional part, and it doesn't seems to play well with knit :-\
     so all code commented out for now, folx who is not into running R on your own computer don't need to run this. 
     https://www.rdocumentation.org/packages/pacman/versions/0.5.1
     pacman provides wrapper function like p_load() to install package if needed, then load the library 
     
 ```{r install_pacman}
     #install.packages( "pacman" )
-    library(pacman) 
-    p_load( readxl )
-    p_load( gridExtra )
+    #library(pacman) 
+    #p_load( readxl )
 ```
+
+
+
+
+
 
 
 
@@ -90,12 +94,6 @@ URL to the original data source if applicable. If not (e.g., the data came from 
 selected a subset, describe these steps (including any options you selected) and the date you accessed
 the data.
 
-Data is available through paper citation  https://www-ncbi-nlm-nih-gov.proxy.lib.uiowa.edu/pmc/articles/PMC4577121/pdf/pone.0138829.pdf 
-or directly through this website https://datadryad.org/stash/dataset/doi:10.5061/dryad.4q3d3
-
-The data came from a prospective clinical study performed in the Santa Clara Valley Medical Center, as described above, that was published in PLOS One. The hospital had developed a standardized delivery room management “bundle” or protocol in 2007 prior to the start of this study. Very preterm infants spontaneously breathing at birth were managed using this bundle with the only difference in this study being timing of delayed cord clamping, 30-45 seconds from Jan 2008-March 2011, or 60-75 seconds from March 2011-April 2014; in that way, the infants were randomized. The dataset falls into three categories: demographics, cord clamping (30-45 seconds group vs 60-75 seconds group) and neonatal outcomes data. There were no significant differences between the two infant groups with respect to gestational age, body weight at birth, receiving antenatal steroids, birth by Caesarian section, or percentage of male sex. Outcomes (as described above) were identified for each patient during their hospitalization.
-
-
 
 \newpage
 
@@ -103,7 +101,14 @@ The data came from a prospective clinical study performed in the Santa Clara Val
 5. [1 mark] Write code below to import your data into R. Assign your dataset to an object.
 
 
-Loading data: 
+Data is available through paper citation  https://www-ncbi-nlm-nih-gov.proxy.lib.uiowa.edu/pmc/articles/PMC4577121/pdf/pone.0138829.pdf 
+or directly through this website https://datadryad.org/stash/dataset/doi:10.5061/dryad.4q3d3
+
+The data came from a prospective clinical study performed in the Santa Clara Valley Medical Center, as described above, that was published in PLOS One. The hospital had developed a standardized delivery room management “bundle” or protocol in 2007 prior to the start of this study. Very preterm infants spontaneously breathing at birth were managed using this bundle with the only difference in this study being timing of delayed cord clamping, 30-45 seconds from Jan 2008-March 2011, or 60-75 seconds from March 2011-April 2014; in that way, the infants were randomized. The dataset falls into three categories: demographics, cord clamping (30-45 seconds group vs 60-75 seconds group) and neonatal outcomes data. There were no significant differences between the two infant groups with respect to gestational age, body weight at birth, receiving antenatal steroids, birth by Caesarian section, or percentage of male sex. Outcomes (as described above) were identified for each patient during their hospitalization.
+
+
+
+data access: 
 
 ```{r load}
 
@@ -111,19 +116,22 @@ library(readxl)
 library(dplyr)
 song = read_xlsx("Song_DCC_PlosOne_datadryad9.16.15.xlsx")
 
-```
 
-
-Optional part, poking around the data to get the lay of the land
-
-```{r feeling the data}
 summary(song)
 str(song)
 set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
 
+cord_clamp_sample10 = song %>% sample_frac(0.1 )
+cord_clamp_sample1  = song %>% sample_frac(0.01)
 #View(song)
 
 ```
+
+
+
+
+
+
 
 \newpage
 
@@ -204,60 +212,142 @@ concept that you are demonstrating and interpret the findings. This should be a 
 and written explanation.
 
 
-We are going to look at a couple of columns (variables) from this data 
-for this part of the exercise.  
-We will look at two continuous variables, 
-1. bw (birth weight) and 
-2. ga (gestational age)
-and see if they maybe linearly correlated.  
-We will generate scatter plots for them, using normal scale and the log scale.
+bw vs ga
+
+
+what do we want to present?
+actually, the data should be to answer questions we want to ask with PPDAC...
+so once we finalize the theme, find a data set, then define these questions?
+
+* five numbers summary  for the bw? something else?
+
+```{r fns}
+Min    = min(       cord_clamp$bw)
+Q1     = quantile(  cord_clamp$bw, probs = 0.25)
+Median = median(    cord_clamp$bw)
+Q3     = quantile(  cord_clamp$bw, probs = 0.75)
+Max    = max(       cord_clamp$bw)
+
+
+####Outliers: any data point more than 1.5*IQR away from median.
+####IQR: InterQuartile Range: Q1-Median or Q3-Median
+
+five_num_summary = cord_clamp %>% summarize( min = Min,
+                                          Q1 = Q1,
+                                          median = Median,
+                                          Q3 = Q3,
+                                          max = Max)
+five_num_summary
+
+```
+
+* mean vs median?
+*  ??
+
+
+* scatter plot of bw vs dcc?
+
+
 
 
 ```{r plot}
 
+Project = cord_clamp
+bar<-ggplot(Project, aes(x=groups, y=atemp)) + 
+  geom_bar(stat = "identity", color = "#3399FF")
+bar
+
+
+# consider create a new col gcc_grp 0=no_dcc, 1=dcc_grp_1, 2=dcc_grp_2
+# then use this for plot...
+
+## or we don't have to draw conclusion yet, just plot select demographics listed in table 1 ?
+
+
 library(ggplot2)
 library(tidyverse)
+ggplot(data=cord_clamp, aes(x=atemp, y=bw)) + geom_point(aes(col=groups))
+
+
+song_lm     = lm(     bw  ~ ga, song_ext )
+song_lm_log = lm( log(bw) ~ ga, song_ext )
+
 library(broom)
-library(gridExtra)  # provides the grid.arrange() fn to display multiple plots on same graph
 
-song_lm         = lm(     bw  ~     ga,  song )
-song_lm_logbw   = lm( log(bw) ~     ga,  song )
-song_lm_logga   = lm(     bw  ~ log(ga), song )
-song_lm_logbwga = lm( log(bw) ~ log(ga), song )
-
+#tidyverse.
+tidy(song_lm)
 icept = song_lm$coefficients[[1]]
 slp   = song_lm$coefficients[[2]]
-icept_logbw   = song_lm_logbw$coefficients[[1]]
-slp_logbw     = song_lm_logbw$coefficients[[2]]
-icept_logga   = song_lm_logga$coefficients[[1]]
-slp_logga     = song_lm_logga$coefficients[[2]]
-icept_logbwga = song_lm_logbwga$coefficients[[1]]
-slp_logbwga   = song_lm_logbwga$coefficients[[2]]
 
-rsq         <- glance( song_lm         ) %>% pull(r.squared) %>% round(4)
-rsq_logbw   <- glance( song_lm_logbw   ) %>% pull(r.squared) %>% round(4)
-rsq_logga   <- glance( song_lm_logga   ) %>% pull(r.squared) %>% round(4)
-rsq_logbwga <- glance( song_lm_logbwga ) %>% pull(r.squared) %>% round(4)
+icept_log = song_lm_log$coefficients[[1]]
+slp_log   = song_lm_log$coefficients[[2]]
 
-xy = ggplot( data=song, aes(x=ga, y=bw)) +  geom_point() +
-  geom_abline( intercept=icept,     slope=slp,     col="blue",  lty=2 ) + 
-  labs( title=paste("R²=", rsq ), x="Gestation (week)", y="Birth Weight (g)")
+rsq <- glance( song_lm ) 
+rsq_log <- glance( song_lm_log )
 
-xybw   = ggplot( data=song, aes(x=ga, y=log(bw))) +  geom_point() +
-  geom_abline( intercept=icept_logbw, slope=slp_logbw, col="cyan", lty=1 ) +
-  labs( title=paste("R²=", rsq_logbw ), x="Gestation (week)", y="Log of Birth Weight (g)")
+rsq
+rsq_log
 
-xyga   = ggplot( data=song, aes(x=log(ga), y=bw)) +  geom_point() +
-  geom_abline( intercept=icept_logga, slope=slp_logga, col="green", lty=1 ) +
-  labs( title=paste("R²=", rsq_logga ), x="Log of Gestation (week)", y="Birth Weight (g)")
+#ggplot( data=cord_clamp, aes(x=ga, y=bw)) +  geom_point(aes(col=atemp)) +
+#  geom_abline( intercept=icept, slope=slp, col="red", lty=2 )
 
-xybwga = ggplot( data=song, aes(x=log(ga), y=log(bw))) +  geom_point() +
-  geom_abline( intercept=icept_logbwga, slope=slp_logbwga, col="brown", lty=1 )+
-  labs( title=paste("R²=", rsq_logbwga ), x="Log of Gestation (week)", y="Log of Birth Weight (g)")
 
-grid.arrange(xy,xybw,xyga,xybwga, nrow=2, top="Gestational Age vs Birthweight")
+
+
+ggplot( data=song_ext, aes(x=ga, y=bw)) +  geom_point(aes(col=atemp) ) +
+  geom_abline( intercept=icept,     slope=slp,     col="red",  lty=2 ) +
+  geom_abline( intercept=icept_log, slope=slp_log, col="green", lty=1 ) 
+#+ labs( title= )
+ 
+
+
+
+ggplot( data=song_ext, aes(x=ga, y=log(bw))) +  geom_point(aes(col=atemp) ) +
+  geom_abline( intercept=icept_log, slope=slp_log, col="green", lty=1 )
+
+
+
+#ggplot(data=cord_clamp, aes(x=los, y=bw)) + 
+#  geom_point(aes(col=groups))
+
+song_ext = 
+song %>% mutate(      diedTF    = case_when( died==0 ~ FALSE , died==1 ~ TRUE ) ,
+                      groupsCat = case_when( groups==1 ~ "One" , groups==2 ~ "Two") ,
+                      losCat    = case_when( los==1 ~ "One"   ,  los==0    ~ "Zero") ,
+                      sexCat    = case_when( sex==1 ~ "Female" , sex==2    ~ "Male") 
+                      )
+
+
+ggplot(data=song_ext, aes(x=sexCat)) +
+  geom_bar( aes(fill=diedTF),  position="dodge" )
+  
+ggplot(data=song_ext, aes(x=)) +
+  geom_bar( aes(fill=sexCat),  position="dodge" )
+
+  
+#geom_bar( aes(fill=diedTF), stat="identity", position="dodge" )
+
+#### maybe do a facet_wrap with ga ??  hypothermia ??  survwithoutmajormorbidity  ?
+
+str(cord_clamp)
 
 ```
 
 
+// below don't work with this dataset
+```{r pressure, echo=FALSE}
+#plot(cord_clamp_sample10)
+```
+
+
+```{r eg lect 7 slide 14}
+
+two_way_data <- tribble(~ smoking, ~ lung_cancer, ~ percent, ~number,
+"smoker", "lung cancer", 4.8, 12,
+"smoker", "no lung cancer", 95.2,238,
+"non-smoker", "lung cancer", 0.9, 7,
+"non-smoker", "no lung cancer", 99.1, 743)
+
+two_way_data
+```
 
