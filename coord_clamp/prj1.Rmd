@@ -1,11 +1,12 @@
 ---
 title: "cord clamping prj1"
 output: pdf_document
-members: TBD
-Gruop ID: TBD
+members: Rachel Dahl, Sharon Dros, Habiba Afrin, Zhigang Ma.
+Gruop ID: 23 
+GSI: Gene Ho
 ---
 
-Data project 1, Due Feb 28.
+Data project 1, Due March 7.
 
 
 
@@ -53,6 +54,13 @@ to answer and let us know what type of question this is in terms of the PPDAC fr
 
 
 
+PPDAC stands for Problem, Plan, Data Analysis, and Conclusion. 
+Problem: What is the optimal timing of delayed cord clamping (DCC) in order to offer very preterm infants to maximize placental transfusion without interfering with stabilization and resuscitation.
+Outcomes that were observed in the study we selected for data included: neonatal death, intraventricular hemorrhage, hematocrit level, delivery room intubation, hypothermia, need for surfactant therapy, intubation in first 24 hrs, any intubation during hospitalization, development of chronic lung disease, late onset sepsis, any red blood cell transfusion during hospitalization, necrotizing enterocolitis, and severe retinopathy of prematurity. The hypothesis was that prolonged (60-75 sec) delayed cord clamping would offer improved outcomes compared to shorter (30-45 sec) clamping without complications of desaturation or stabilization.
+
+This was a causative/etiological question since we wanted to know whether changing the exposure/intervention (i.e. longer cord clamping) would result in changed outcomes. 
+
+
 
 
 \newpage
@@ -60,6 +68,9 @@ to answer and let us know what type of question this is in terms of the PPDAC fr
 2. [2 marks] What is the target population for your project? Why was this target chosen i.e., what was
 your rationale for wanting to answer this question in this specific population?
 
+
+The target population is very preterm infants (i.e. infants born at <32 weeks gestation) in the United States spontaneously breathing at birth. Very premature infants require stabilization and are at a high risk for requiring resuscitation at birth. This target population was chosen because the location where the data was collected serves a high-risk obstetric population, where they treat a high number of very preterm infants at the Santa Clara Valley Medical Center with a regional level III Neonatal Intensive Care Unit (NICU). 
+More broadly, our Prob/Stat team chose this population because improving preterm health care is a relevant and current public health problem particularly in underserved populations. 
 
 
 
@@ -69,6 +80,10 @@ your rationale for wanting to answer this question in this specific population?
 3. [2 marks] What is the sampling frame used to collect the data you are using? Describe why you think
 this sampling strategy is appropriate for your question. To what group(s) would you feel comfortable
 generalizing the findings of your study and why.
+
+
+The sampling frame included very preterm infants born between January 2008 and April 2014 at the Santa Clara Valley Medical Center. The sample included a total n of 353 infants, 187 in group 30-45 seconds DCC and 166 in group 60-75 seconds DCC. 30-45 seconds group was done from 2008-2011 and 60-75 seconds group was done from 2011-2014. This sampling strategy was appropriate because the sample was large enough to meet precalculated power requirements and included very preterm infants which is the population that we wanted to study. Additionally, there were no significant differences in baseline demographic characteristics between the exposed group (60-75 seconds DCC) and unexposed group (30-45 seconds group), allowing improved comparison between outcomes with respect to interventions. The findings of this study would likely generalize to other very preterm infants spontaneously breathing at birth in a hospital setting with a level III NICU in the United States, but more studies are warranted to confirm these results. It is unclear whether these findings would generalize to outside the hospital setting, e.g. home births, given there could be confounding variables from other interventions in the hospital setting that were not analyzed.
+
 
 
 \newpage
@@ -86,19 +101,30 @@ the data.
 5. [1 mark] Write code below to import your data into R. Assign your dataset to an object.
 
 
+Data is available through paper citation  https://www-ncbi-nlm-nih-gov.proxy.lib.uiowa.edu/pmc/articles/PMC4577121/pdf/pone.0138829.pdf 
+or directly through this website https://datadryad.org/stash/dataset/doi:10.5061/dryad.4q3d3
+
+The data came from a prospective clinical study performed in the Santa Clara Valley Medical Center, as described above, that was published in PLOS One. The hospital had developed a standardized delivery room management “bundle” or protocol in 2007 prior to the start of this study. Very preterm infants spontaneously breathing at birth were managed using this bundle with the only difference in this study being timing of delayed cord clamping, 30-45 seconds from Jan 2008-March 2011, or 60-75 seconds from March 2011-April 2014; in that way, the infants were randomized. The dataset falls into three categories: demographics, cord clamping (30-45 seconds group vs 60-75 seconds group) and neonatal outcomes data. There were no significant differences between the two infant groups with respect to gestational age, body weight at birth, receiving antenatal steroids, birth by Caesarian section, or percentage of male sex. Outcomes (as described above) were identified for each patient during their hospitalization.
+
+
+
 data access: 
 
 ```{r load}
 
 library(readxl)
 library(dplyr)
-cord_clamp = read_xlsx("Song_DCC_PlosOne_datadryad9.16.15.xlsx")
-summary(cord_clamp)
-str(cord_clamp)
+song = read_xlsx("Song_DCC_PlosOne_datadryad9.16.15.xlsx")
+
+
+summary(song)
+str(song)
 set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
-cord_clamp_sample10 = cord_clamp %>% sample_frac(0.1 )
-cord_clamp_sample1  = cord_clamp %>% sample_frac(0.01)
-#View(coord_clamp_sample1)
+
+cord_clamp_sample10 = song %>% sample_frac(0.1 )
+cord_clamp_sample1  = song %>% sample_frac(0.01)
+#View(song)
+
 ```
 
 
@@ -114,17 +140,17 @@ cord_clamp_sample1  = cord_clamp %>% sample_frac(0.01)
 i) What are the dimensions of the dataset?
 
 
-```{r ghana_dim}
-dim(cord_clamp)
+```{r data_dim}
+dim(song)
 ```
-3331 rows, 18 columns (vars)
+
+Answer provided by R: 353 rows, 36 columns.
 
 
 ii) Provide a list of variable names.
 
 
-
-They variables are listed in the docx that came with the data:
+The variables are listed in the docx that came with the data:
 data access: 
 
 SongDCC_PlosOne_datadryad9.16.15 ReadMe File
@@ -166,13 +192,16 @@ anycld- chronic lung disease, 1=yes, 0=no
 survwithoutmajormorbidity – survival without severe intraventricular hemorrhage, severe retinopathy of prematurity, late onset sepsis, necrotizing enterocolitis or chronic lung disease, 1=yes, 0=no
 
 
+```{r var_list}
 
+colnames(song)
+```
 
 iii) Print the first six rows of the dataset.
 
 ```{r first_six_rows}
 
-cord_clamp %>% head(6)
+head(song,6)
 
 ```
 
@@ -181,6 +210,9 @@ cord_clamp %>% head(6)
 7. [4 marks] Use the data to demonstrate a statistical concept from Part I of the course. Describe the
 concept that you are demonstrating and interpret the findings. This should be a combination of code
 and written explanation.
+
+
+bw vs ga
 
 
 what do we want to present?
@@ -213,26 +245,109 @@ five_num_summary
 *  ??
 
 
-* scatter plot of bmi vs cholesterol?
+* scatter plot of bw vs dcc?
+
+
+
 
 ```{r plot}
 
+Project = cord_clamp
+bar<-ggplot(Project, aes(x=groups, y=atemp)) + 
+  geom_bar(stat = "identity", color = "#3399FF")
+bar
 
+
+# consider create a new col gcc_grp 0=no_dcc, 1=dcc_grp_1, 2=dcc_grp_2
+# then use this for plot...
+
+## or we don't have to draw conclusion yet, just plot select demographics listed in table 1 ?
 
 
 library(ggplot2)
-ggplot(data=cord_clamp, aes(x=dcc, y=died)) + 
-  geom_point(aes(col=bw))
+library(tidyverse)
+ggplot(data=cord_clamp, aes(x=atemp, y=bw)) + geom_point(aes(col=groups))
 
 
-#### maybe do a facet_wrap with ??
+song_lm     = lm(     bw  ~ ga, song_ext )
+song_lm_log = lm( log(bw) ~ ga, song_ext )
+
+library(broom)
+
+#tidyverse.
+tidy(song_lm)
+icept = song_lm$coefficients[[1]]
+slp   = song_lm$coefficients[[2]]
+
+icept_log = song_lm_log$coefficients[[1]]
+slp_log   = song_lm_log$coefficients[[2]]
+
+rsq <- glance( song_lm ) 
+rsq_log <- glance( song_lm_log )
+
+rsq
+rsq_log
+
+#ggplot( data=cord_clamp, aes(x=ga, y=bw)) +  geom_point(aes(col=atemp)) +
+#  geom_abline( intercept=icept, slope=slp, col="red", lty=2 )
+
+
+
+
+ggplot( data=song_ext, aes(x=ga, y=bw)) +  geom_point(aes(col=atemp) ) +
+  geom_abline( intercept=icept,     slope=slp,     col="red",  lty=2 ) +
+  geom_abline( intercept=icept_log, slope=slp_log, col="green", lty=1 ) 
+#+ labs( title= )
+ 
+
+
+
+ggplot( data=song_ext, aes(x=ga, y=log(bw))) +  geom_point(aes(col=atemp) ) +
+  geom_abline( intercept=icept_log, slope=slp_log, col="green", lty=1 )
+
+
+
+#ggplot(data=cord_clamp, aes(x=los, y=bw)) + 
+#  geom_point(aes(col=groups))
+
+song_ext = 
+song %>% mutate(      diedTF    = case_when( died==0 ~ FALSE , died==1 ~ TRUE ) ,
+                      groupsCat = case_when( groups==1 ~ "One" , groups==2 ~ "Two") ,
+                      losCat    = case_when( los==1 ~ "One"   ,  los==0    ~ "Zero") ,
+                      sexCat    = case_when( sex==1 ~ "Female" , sex==2    ~ "Male") 
+                      )
+
+
+ggplot(data=song_ext, aes(x=sexCat)) +
+  geom_bar( aes(fill=diedTF),  position="dodge" )
+  
+ggplot(data=song_ext, aes(x=)) +
+  geom_bar( aes(fill=sexCat),  position="dodge" )
+
+  
+#geom_bar( aes(fill=diedTF), stat="identity", position="dodge" )
+
+#### maybe do a facet_wrap with ga ??  hypothermia ??  survwithoutmajormorbidity  ?
+
+str(cord_clamp)
 
 ```
 
 
 // below don't work with this dataset
 ```{r pressure, echo=FALSE}
-plot(cord_clamp_sample10)
+#plot(cord_clamp_sample10)
 ```
 
+
+```{r eg lect 7 slide 14}
+
+two_way_data <- tribble(~ smoking, ~ lung_cancer, ~ percent, ~number,
+"smoker", "lung cancer", 4.8, 12,
+"smoker", "no lung cancer", 95.2,238,
+"non-smoker", "lung cancer", 0.9, 7,
+"non-smoker", "no lung cancer", 99.1, 743)
+
+two_way_data
+```
 
