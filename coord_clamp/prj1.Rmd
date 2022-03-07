@@ -72,7 +72,7 @@ This was a causative/etiological question since we wanted to know whether changi
 your rationale for wanting to answer this question in this specific population?
 
 
-The target population is very preterm infants (i.e. infants born at <32 weeks gestation) in the United States spontaneously breathing at birth. Very premature infants require stabilization and are at a high risk for requiring resuscitation at birth. This target population was chosen because the location where the data was collected serves a high-risk obstetric population, where they treat a high number of very preterm infants at the Santa Clara Valley Medical Center with a regional level III Neonatal Intensive Care Unit (NICU). 
+The target population is very preterm infants (i.e. infants born at <32 weeks gestation) in the United States spontaneously breathing at birth. Very premature infants require stabilization and are at a high risk for requiring resuscitation at birth. This target population was chosen because the location where the data was collected serves a high-risk obstetric population, where they treat a large number of very preterm infants at the Santa Clara Valley Medical Center with a regional level III Neonatal Intensive Care Unit (NICU). 
 More broadly, our Prob/Stat team chose this population because improving preterm health care is a relevant and current public health problem particularly in underserved populations. 
 
 
@@ -209,9 +209,9 @@ concept that you are demonstrating and interpret the findings. This should be a 
 and written explanation.
 
 
-We hypothesized that birth weight and gestational age would have a direct positive correlation. Both of these are continuous variables, as such, we made scatter plots and performed linear regressions to identify if a linear model applied to this data. We also converted the variables to a log scale to improve the visualization of the relationship.  What we found is that converting  birth weight to a log scale yield a slightly better R-squared correlation score than leaving it in linear scale.  This is not a huge improvelemt, since R^2 was still only at about 0.69, but the data points in the XY scatter plots does seems to have a more uniform spread from the lm() abline in this case.
+We hypothesized that birth weight and gestational age would have a direct positive correlation. Both of these are continuous variables, as such, we made scatter plots and performed linear regressions to identify if a linear model applied to this data. We also converted the variables to a log scale to improve the visualization of the relationship.  What we found is that converting  birth weight to a log scale yielded a slightly better R-squared correlation score than leaving it in linear scale.  This is not a huge improvement, since R^2 was still only at about 0.69, but the data points in the XY scatter plots does seem to have a more uniform spread from the lm() abline in this case.
 
-Future part of the project we will evaluate other relationships of the data and further investigate birthweight, gestational period, delayed cord clamping and preterm outcome.  
+For future parts of the project, we will evaluate other relationships of the data and further investigate birth weight, gestational period, delayed cord clamping and preterm outcome. 
 
 
 ```{r plot}
