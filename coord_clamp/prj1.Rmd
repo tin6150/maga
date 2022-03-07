@@ -1,9 +1,16 @@
 ---
-title: "cord clamping prj1"
+title: "PHW142 Stat for Public Health, Project #1"
+subtitle: "Delayed cord clamping and preterm birth outcome" 
 output: pdf_document
-members: Rachel Dahl, Sharon Dros, Habiba Afrin, Zhigang Ma.
-Gruop ID: 23 
+members: 
+ * Rachel Dahl, 
+ * Sharon Dros, 
+ * Habiba Afrin, 
+ * Zhigang Ma, 
+ * Tin Ho, SID...
+Gruop ID: 23
 GSI: Gene Ho
+Professor: Dr Mi-Suk Kang Dufour
 ---
 
 Data project 1, Due March 7.
@@ -120,9 +127,7 @@ Optional part, poking around the data to get the lay of the land
 summary(song)
 str(song)
 set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
-
 #View(song)
-
 ```
 
 \newpage
@@ -204,13 +209,9 @@ concept that you are demonstrating and interpret the findings. This should be a 
 and written explanation.
 
 
-We are going to look at a couple of columns (variables) from this data 
-for this part of the exercise.  
-We will look at two continuous variables, 
-1. bw (birth weight) and 
-2. ga (gestational age)
-and see if they maybe linearly correlated.  
-We will generate scatter plots for them, using normal scale and the log scale.
+We hypothesized that birth weight and gestational age would have a direct positive correlation. Both of these are continuous variables, as such, we made scatter plots and performed linear regressions to identify if a linear model applied to this data. We also converted the variables to a log scale to improve the visualization of the relationship.  What we found is that converting  birth weight to a log scale yield a slightly better R-squared correlation score than leaving it in linear scale.  This is not a huge improvelemt, since R^2 was still only at about 0.69, but the data points in the XY scatter plots does seems to have a more uniform spread from the lm() abline in this case.
+
+Future part of the project we will evaluate other relationships of the data and further investigate birthweight, gestational period, delayed cord clamping and preterm outcome.  
 
 
 ```{r plot}
@@ -223,7 +224,6 @@ library(gridExtra)  # provides the grid.arrange() fn to display multiple plots o
 song_lm         = lm(     bw  ~     ga,  song )
 song_lm_logbw   = lm( log(bw) ~     ga,  song )
 song_lm_logga   = lm(     bw  ~ log(ga), song )
-song_lm_logbwga = lm( log(bw) ~ log(ga), song )
 
 icept = song_lm$coefficients[[1]]
 slp   = song_lm$coefficients[[2]]
@@ -231,13 +231,10 @@ icept_logbw   = song_lm_logbw$coefficients[[1]]
 slp_logbw     = song_lm_logbw$coefficients[[2]]
 icept_logga   = song_lm_logga$coefficients[[1]]
 slp_logga     = song_lm_logga$coefficients[[2]]
-icept_logbwga = song_lm_logbwga$coefficients[[1]]
-slp_logbwga   = song_lm_logbwga$coefficients[[2]]
 
 rsq         <- glance( song_lm         ) %>% pull(r.squared) %>% round(4)
 rsq_logbw   <- glance( song_lm_logbw   ) %>% pull(r.squared) %>% round(4)
 rsq_logga   <- glance( song_lm_logga   ) %>% pull(r.squared) %>% round(4)
-rsq_logbwga <- glance( song_lm_logbwga ) %>% pull(r.squared) %>% round(4)
 
 xy = ggplot( data=song, aes(x=ga, y=bw)) +  geom_point() +
   geom_abline( intercept=icept,     slope=slp,     col="blue",  lty=2 ) + 
@@ -251,11 +248,7 @@ xyga   = ggplot( data=song, aes(x=log(ga), y=bw)) +  geom_point() +
   geom_abline( intercept=icept_logga, slope=slp_logga, col="green", lty=1 ) +
   labs( title=paste("R²=", rsq_logga ), x="Log of Gestation (week)", y="Birth Weight (g)")
 
-xybwga = ggplot( data=song, aes(x=log(ga), y=log(bw))) +  geom_point() +
-  geom_abline( intercept=icept_logbwga, slope=slp_logbwga, col="brown", lty=1 )+
-  labs( title=paste("R²=", rsq_logbwga ), x="Log of Gestation (week)", y="Log of Birth Weight (g)")
-
-grid.arrange(xy,xybw,xyga,xybwga, nrow=2, top="Gestational Age vs Birthweight")
+grid.arrange(xy,xybw,xyga, nrow=2, top="Gestational Age vs Birth Weight")
 
 ```
 
