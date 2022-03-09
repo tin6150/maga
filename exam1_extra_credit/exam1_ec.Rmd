@@ -66,12 +66,17 @@ rot_data = data.frame( xtime  )
 hist = ggplot(rot_data, aes(x=xtime) ) + geom_histogram()
 
 hist
+
+mean(xtime)
+sd(xtime)
 ```
+
+Normal, skewed right.  mean=5.7, sd=2.18
 
 ### grading rubric for 4.1
 
 + 1 pt
-Correct: Shape = skewed right; Center = mean around 6-7 days or median around 5-6 days; Spread = from 1 day to 15 days
+Correct: Shape = skewed right; Center = mean around 5-6 days or median around 5-6 days; Spread = from 1 day to 15 days
 
 + 0.5 pts
 Shape, Center, and Spread: One description correct
@@ -82,11 +87,20 @@ Shape, Center and Spread: two descriptions correct
 + 0 pts
 Incorrect
 
++ -10 pts
+Not writing units
+
++ -50 pts
+Not using the correct number of significant figures
+
++ 100 pts
+Making two adjacent bars of the same height to confuse the heck out of everyone
 
 \newpage
 
 ## 4.2 [2 points] The reserarchers then run a linear regression model of the gpa variable regressed on the xtime variable and obtinaed the results below.  Interpre the R^2 value in the context of this problem.
 
+r2 corresponds to 65%, so data aren't really all that close correlated, ie gpa does not track closely to number of days on Rotterdam all that much, only by about 65%.  Maybe eating more Jelly Belly Beans would have worked just as well.  Almost.  
 
 ```{html}
 ## # A tibble: 1 x 12
@@ -114,6 +128,8 @@ Incorrect
 
 ## 4.3 [2 points] The investigators hypothesize that another variable maybe influencing the relationship between gpa and time spent on Rotterdam.  Give an example of a variable that may be influencing the relationship and justify your reasoning.
 
+Age and Work, they are confounders not clearly evaluated by the simple stats employed.
+
 ### Grading rubric for 4.3
 
 + 2 pts
@@ -133,6 +149,7 @@ Incorrect
 ```{r filter_eg}
 
 library(readr)
+library(dplyr)
 rot_csv = read.csv("./rotterdam.csv")
 str(rot_csv)
 
@@ -173,6 +190,8 @@ Code would yield an error message (syntax, format, etc)
 
 ## 4.5 [2 points] Can researchers generalize the sample distribution of gpa to the general student population? Why or why not?
 
+Yes, or why else do all this research? 
+
 ### Grading rubric for 4.5
 
 + 0 pts
@@ -185,9 +204,9 @@ States researchers cannot generalize findings
 Correct explanation:
 Correctly identify internal vs external validity.
 
-Internal validity was accomplied by:
+Internal validity was accomplished by:
 The distribution of gpa  was NOT pre-determined by the researchers.  
-Students are randomly selected, regarless of gender, age, major of studies.  
+Students are randomly selected, regardless of gender, age, major of studies.  
 
 External Validity:
 Not accomplished because:
