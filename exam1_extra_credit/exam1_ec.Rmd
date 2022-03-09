@@ -135,21 +135,6 @@ Incorrect
 library(readr)
 rot_csv = read.csv("./rotterdam.csv")
 str(rot_csv)
-#View(rot_csv)
-
-
-prep_data = rot_csv %>% mutate( gfr = gpa, prep_time = xtime )
-str(prep_data)
-
-
-val_mean_prep_over_50 = prep_data %>% filter( age >= 20) %>% mutate( gfr_ratio = gfr/prep_time) %>% summarize( mean_gfr_ratio = mean(gfr_ratio) )
-
-mean_prep_over_50 = prep_data %>% filter( age >= 20 ) %>%   mutate( gfr_ratio = gfr/prep_time, mean_gfr_ratio = val_mean_prep_over_50 )
-
-val_mean_prep_over_50
-mean_prep_over_50
-
-
 
 val_mean_gpa_fulltime_student = rot_csv %>% filter( work == FALSE ) %>% mutate( gpa_ratio = gpa/xtime) %>% summarize( mean_gpa_ratio = mean(gpa_ratio) )
 
