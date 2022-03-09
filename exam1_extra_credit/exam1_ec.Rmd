@@ -10,28 +10,13 @@ Professor: Dr Mi-Suk Kang Dufour
 Instructions: 
 https://bcourses.berkeley.edu/courses/1513233/files/82526751?wrap=1
 
-
-* each answer in a new page
-* You must indicate on Gradescope which questions are on which pages.
-* questions are pasted below
+Source: https://github.com/tin6150/maga/blob/main/exam1_extra_credit/exam1_ec.Rmd 
 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-## probably should not have any new lib... so delete when done
-
-## install pacman to help manage installation and loading of additional libraries
-
-
-```{r install_pacman}
-    #install.packages( "pacman" )
-    library(pacman)
-    p_load( readxl )
-    p_load( gridExtra )
-```
 
 
 
@@ -45,11 +30,150 @@ The first question was to describe the distribution of a histogram, which is a g
 The question asked to describe the distribution, which looked like a bride with her long dress tailing in the back, ie it was kind of normal distribution looking, but skewed right.  Furthermore, a description in statistic class require one to be quantitative as well, which mean one has to provide some numbers, specifically the mean and the spread, which, squiinting my old eyes a bit, can be read where the peak is, thus mean=5.  Spread has to do with how far away data span from the mean.  Statistician call it "standard deviation".  Not having a computer to crunch on the actual data is a bit hard to read, since the definition of std dev is sigma = sqrt(1/N * SUM(i=1:N,(x(i)-mu)^2)).  Most journal paper would actually report this.  But we are going to have to  guestimate this for the exam.  Given the 68-95-99.7 rule, where 68% of data are within 1*sigma, 95% within 2*sigma, and 99.7% within 3*sigma, centered around the mean, the graph in the exam question seems to have sd=1 or so.  What is an "undstandard deviation" is left as an exercise to the reader.
 
 
+\newpage
+
 # New proposal for future semester Question 4 [9 points total]
 
 
+Rotterdam is a new drug being researched that help calm students down during exams.  The researchers hypothesizes that by calming students 10-30%, it can help them better focus on the task on hand: acing the exams.  To proof their hypothesis, they recruited 600 Berkeley graduate students during the finals weeks as guinea pigs.  300 random students of random gender are given an 8000 mg of Rotterdam oral pills, 10 pills a day, for 15 days, starting from 10 days before final starts.  Another 300 random students were given caffeine jelly beans.  The Rotterdam pills are shaped, colored and sweetened to be 100% indistinguishable from the caffeine jelly beans.  Students are asked to voluntarily sign a NDA, a research consent and a non-sue discrimination even in the event that they fail their exam(s).  The data have been collected in a data set called rot_data.
+
+xtime: time in days on Rotterdam
+
+gpa: the students grade point average for the semester, a measure of their abilities to ace the exams.
+
+age: participant's age
+
+work: whether student worked in addition to attending grad school.
+
+## 4.1 [1 point] Describe the distribution of the xtime variable using the histogram below
+
+```{r create_plot}
+library(ggplot2)
+
+set.seed(4.0)
+data1 = rnorm(n=510,mean=5,sd=1)
+data2 = rnorm(n=66,mean=9,sd=1)
+data3 = rnorm(n=24,mean=13,sd=1)
+
+xtime = c(data1,data2,data3)
+
+rot_data = data.frame( xtime  )
+# str(rot_data)
+# View(rot_data)
+
+hist = ggplot(rot_data, aes(x=xtime) ) + geom_histogram()
+
+hist
+```
+
+### grading rubric for 4.1
+
++ 1 pt
+Correct: Shape = skewed right; Center = mean around 6-7 days or median around 5-6 days; Spread = from 1 day to 15 days
+
++ 0.5 pts
+Shape, Center, and Spread: One description correct
+
++ 0.66 pts
+Shape, Center and Spread: two descriptions correct
+
++ 0 pts
+Incorrect
 
 
+\newpage
+
+## 4.2 [2 points] The reserarchers then run a linear regression model of the gpa variable regressed on the xtime variable and obtinaed the results below.  Interpre the R^2 value in the context of this problem.
 
 
+```{html}
+## # A tibble: 1 x 12
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>  <dbl> <dbl> <dbl>
+## 1     0.653         0.652  271.      662. 8.93e-83     1 -2478. 4962. 4973.
+## # ... with 3 more variables: deviance <dbl>, df.residual <int>, nobs <int>
+
+```
+
+
+### Grading rubric for 4.2
+
+
++ 2 pts
+Correct: 65.3% of the variation in the gpa is explained by the variation in Rotterdam usage in days.
+
++ 1 pt
+Partial Credit: 1 point for correct value (65.3%) or 1 point for correct interpretation.
+
++ 0 pts
+Incorrect
+
+\newpage
+
+## 4.3 [2 points] The investigators hypothesize that another variable maybe influencing the relationship between gpa and time spent on Rotterdam.  Give an example of a variable that may be influencing the relationship and justify your reasoning.
+
+### Grading rubric for 4.3
+
++ 2 pts
+Correct: Age and/or Work as a potential confounding variable. Age and/or Work is related to both exposure and outcome.
+
++ 1 pt
+Partial Credit: Confounder identified or justification given, but not both.
+
++ 0 pts
+Incorrect
+
+\newpage
+
+
+## 4.4 [2 points] The team decides that they would like to subset their sample to include only individuals who do not work and calculate the mean gpa, a variable that represents the ratio of gpa to the days spent on Rotterdam. Write the line of code that subsets your original sample to the individuals of interest, creates the gpa_ratio variable, calculates the mean of this variable, called mean_gpa_ratio, and assign this to a dataframe called mean_gpa_fulltime_student.
+
+
+### Grading rubric for 4.4
+
++ 0 pts
+Incorrect 
+
++ 0.5 pts
+Correct use of filter() : 
+filter(work==FALSE)
+
++ 0.5 pts
+Correct use of mutate() :
+mutate(gpa_ratio = gpa/xtime)
+
++ 1 pt
+Correct use of summarize() :
+summarize(mean_gpa_ratio = mean(gpa_ratio))
+
++ −0.25 pts
+Code would yield an error message (syntax, format, etc) 
+
+
+\newpage
+
+## 4.5 [2 points] Can researchers generalize the sample distribution of gpa to the general student population? Why or why not?
+
+### Grading rubric for 4.5
+
++ 0 pts
+Incorrect generalization 
+
++ 1 pt
+States researchers cannot generalize findings
+
++ 1 pt
+Correct explanation:
+Correctly identify internal vs external validity.
+
+Internal validity was accomplied by:
+The distribution of gpa  was NOT pre-determined by the researchers.  
+Students are randomly selected, regarless of gender, age, major of studies.  
+
+External Validity:
+Not accomplished because:
+graduate students != undergraduate students; berkeley students != community college students, etc
+
++ 0.5 pts
+incorrect explanation but recognized that sample was not representative of general student population.
 
