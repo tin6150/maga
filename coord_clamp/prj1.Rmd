@@ -1,21 +1,45 @@
 ---
 title: "PHW142 Stat for Public Health, Project #1"
-subtitle: "Delayed cord clamping and preterm birth outcome" 
-output: pdf_document
-members: 
- * Rachel Dahl, 
- * Sharon Dros, 
- * Habiba Afrin, 
- * Zhigang Ma, 
- * Tin Ho, SID...
+author:
+ - Rachel Dahl
+ - Sharon Drost 
+ - Habiba Afrin
+ - Zhigang Ma
+ - Tin Ho
 Gruop ID: 23
 GSI: Gene Ho
 Professor: Dr Mi-Suk Kang Dufour
+date: "2022-03-07"
+output: pdf_document
 ---
 
 Data project 1, Due March 7.
 
+Title: "PHW142 Stat for Public Health, Project #1"
 
+Subtitle: "Delayed cord clamping and preterm birth outcome" 
+
+
+Team members and Student IDs:
+ 
+ 
+Rachel Dahl 30
+
+Sharon Drost 30
+
+Habiba Afrin 30
+
+Zhigang Ma 30
+
+Tin Ho 30
+
+Gruop ID: 23
+
+GSI: Gene Ho
+
+Professor: Dr Mi-Suk Kang Dufour
+
+~~~~~
 
 Instructions from part1-instructions-1.pdf
 https://bcourses.berkeley.edu/courses/1513233/pages/data-project
@@ -31,18 +55,17 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## install pacman to help manage installation and loading of additional libraries
+## Install pacman to help manage installation and loading of additional libraries
     
-    Optional part, and it may not play well with knit :-\
-    so all code commented out for now, folx who is not into running R on your own computer don't need to run this. 
     https://www.rdocumentation.org/packages/pacman/versions/0.5.1
     pacman provides wrapper function like p_load() to install package if needed, then load the library 
     
 ```{r install_pacman}
-    #install.packages( "pacman" )
-    library(pacman) 
-    p_load( readxl )
-    p_load( gridExtra )
+install.packages( "pacman" )
+library(pacman) 
+p_load( readxl )
+p_load( gridExtra )
+p_load( broom )
 ```
 
 
@@ -124,7 +147,7 @@ song = read_xlsx("Song_DCC_PlosOne_datadryad9.16.15.xlsx")
 Optional part, poking around the data to get the lay of the land
 
 ```{r feeling the data}
-summary(song)
+#summary(song)
 str(song)
 set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
 #View(song)
@@ -190,16 +213,13 @@ survwithoutmajormorbidity – survival without severe intraventricular hemorrhag
 
 
 ```{r var_list}
-
 colnames(song)
 ```
 
 iii) Print the first six rows of the dataset.
 
 ```{r first_six_rows}
-
 head(song,6)
-
 ```
 
 \newpage
@@ -207,7 +227,6 @@ head(song,6)
 7. [4 marks] Use the data to demonstrate a statistical concept from Part I of the course. Describe the
 concept that you are demonstrating and interpret the findings. This should be a combination of code
 and written explanation.
-
 
 We hypothesized that birth weight and gestational age would have a direct positive correlation. Both of these are continuous variables, as such, we made scatter plots and performed linear regressions to identify if a linear model applied to this data. We also converted the variables to a log scale to improve the visualization of the relationship.  What we found is that converting  birth weight to a log scale yielded a slightly better R-squared correlation score than leaving it in linear scale.  This is not a huge improvement, since R^2 was still only at about 0.69, but the data points in the XY scatter plots does seem to have a more uniform spread from the lm() abline in this case.
 
