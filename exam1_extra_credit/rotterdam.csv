@@ -1,0 +1,8 @@
+sid,xtime,gpa,age,work
+1,4,3.2,28,TRUE
+2,4,3.1,22,FALSE
+3,4,3.7,23,TRUE
+4,9,3.7,28,FALSE
+333,4,3.7,18,FALSE
+334,4,3.7,18,FALSE
+335,2,2.7,17,FALSE

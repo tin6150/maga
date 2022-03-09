@@ -37,6 +37,8 @@ The question asked to describe the distribution, which looked like a bride with 
 
 Rotterdam is a new drug being researched that help calm students down during exams.  The researchers hypothesizes that by calming students 10-30%, it can help them better focus on the task on hand: acing the exams.  To proof their hypothesis, they recruited 600 Berkeley graduate students during the finals weeks as guinea pigs.  300 random students of random gender are given an 8000 mg of Rotterdam oral pills, 10 pills a day, for 15 days, starting from 10 days before final starts.  Another 300 random students were given caffeine jelly beans.  The Rotterdam pills are shaped, colored and sweetened to be 100% indistinguishable from the caffeine jelly beans.  Students are asked to voluntarily sign a NDA, a research consent and a non-sue discrimination even in the event that they fail their exam(s).  The data have been collected in a data set called rot_data.
 
+sid: student id
+
 xtime: time in days on Rotterdam
 
 gpa: the students grade point average for the semester, a measure of their abilities to ace the exams.
@@ -128,6 +130,38 @@ Incorrect
 
 ## 4.4 [2 points] The team decides that they would like to subset their sample to include only individuals who do not work and calculate the mean gpa, a variable that represents the ratio of gpa to the days spent on Rotterdam. Write the line of code that subsets your original sample to the individuals of interest, creates the gpa_ratio variable, calculates the mean of this variable, called mean_gpa_ratio, and assign this to a dataframe called mean_gpa_fulltime_student.
 
+```{r filter_eg}
+
+library(readr)
+rot_csv = read.csv("./rotterdam.csv")
+str(rot_csv)
+#View(rot_csv)
+
+
+prep_data = rot_csv %>% mutate( gfr = gpa, prep_time = xtime )
+str(prep_data)
+
+
+val_mean_prep_over_50 = prep_data %>% filter( age >= 20) %>% mutate( gfr_ratio = gfr/prep_time) %>% summarize( mean_gfr_ratio = mean(gfr_ratio) )
+
+mean_prep_over_50 = prep_data %>% filter( age >= 20 ) %>%   mutate( gfr_ratio = gfr/prep_time, mean_gfr_ratio = val_mean_prep_over_50 )
+
+val_mean_prep_over_50
+mean_prep_over_50
+
+
+
+val_mean_gpa_fulltime_student = rot_csv %>% filter( work == FALSE ) %>% mutate( gpa_ratio = gpa/xtime) %>% summarize( mean_gpa_ratio = mean(gpa_ratio) )
+
+mean_gpa_fulltime_student = rot_csv %>% filter( work == FALSE ) %>%
+   mutate( gpa_ratio = gpa/xtime, mean_gpa_ratio = mean(gpa_ratio) )
+
+val_mean_gpa_fulltime_student
+val_mean_gpa_fulltime_student$mean_gpa_ratio
+
+mean_gpa_fulltime_student
+
+```
 
 ### Grading rubric for 4.4
 
