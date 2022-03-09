@@ -1,0 +1,55 @@
+---
+title: "PHW142 Stat for Public Health, Exam #1 extra credit"
+#output: pdf_document
+output: html_document
+author: Tin Ho, SID...
+GSI: Gene Ho
+Professor: Dr Mi-Suk Kang Dufour
+---
+
+Instructions: 
+https://bcourses.berkeley.edu/courses/1513233/files/82526751?wrap=1
+
+
+* each answer in a new page
+* You must indicate on Gradescope which questions are on which pages.
+* questions are pasted below
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## probably should not have any new lib... so delete when done
+
+## install pacman to help manage installation and loading of additional libraries
+
+
+```{r install_pacman}
+    #install.packages( "pacman" )
+    library(pacman)
+    p_load( readxl )
+    p_load( gridExtra )
+```
+
+
+
+\newpage
+
+# Concept Review
+
+I got a fairly low grade in Question 4 of the take home midterm.
+The first question was to describe the distribution of a histogram, which is a graph that is very similar to bar chart, except that bar charts are used with categorical variables, whereas histograms are used with continuous variables.  Thus, the bars in the histogram touches one another.  (can one really not make a bar chart where the bars touches?  was rubbing shoulders only allowed in pubs? :P)
+
+The question asked to describe the distribution, which looked like a bride with her long dress tailing in the back, ie it was kind of normal distribution looking, but skewed right.  Furthermore, a description in statistic class require one to be quantitative as well, which mean one has to provide some numbers, specifically the mean and the spread, which, squiinting my old eyes a bit, can be read where the peak is, thus mean=5.  Spread has to do with how far away data span from the mean.  Statistician call it "standard deviation".  Not having a computer to crunch on the actual data is a bit hard to read, since the definition of std dev is sigma = sqrt(1/N * SUM(i=1:N,(x(i)-mu)^2)).  Most journal paper would actually report this.  But we are going to have to  guestimate this for the exam.  Given the 68-95-99.7 rule, where 68% of data are within 1*sigma, 95% within 2*sigma, and 99.7% within 3*sigma, centered around the mean, the graph in the exam question seems to have sd=1 or so.  What is an "undstandard deviation" is left as an exercise to the reader.
+
+
+# New proposal for future semester Question 4 [9 points total]
+
+
+
+
+
+
+
