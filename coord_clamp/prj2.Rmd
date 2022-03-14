@@ -1,0 +1,277 @@
+### just copied from prj1, rename fix tbd.  sid redacted for now
+
+---
+title: "PHW142 Stat for Public Health, Project #1"
+author:
+ - Rachel Dahl
+ - Sharon Drost 
+ - Habiba Afrin
+ - Zhigang Ma
+ - Tin Ho
+Gruop ID: 23
+GSI: Gene Ho
+Professor: Dr Mi-Suk Kang Dufour
+date: "2022-03-07"
+output: pdf_document
+---
+
+Data project 1, Due March 7.
+
+Title: "PHW142 Stat for Public Health, Project #1"
+
+Subtitle: "Delayed cord clamping and preterm birth outcome" 
+
+
+Team members and Student IDs:
+ 
+ 
+Rachel Dahl 30
+
+Sharon Drost 30
+
+Habiba Afrin 30
+
+Zhigang Ma 30
+
+Tin Ho 30
+
+Gruop ID: 23
+
+GSI: Gene Ho
+
+Professor: Dr Mi-Suk Kang Dufour
+
+~~~~~
+
+Instructions from part1-instructions-1.pdf
+https://bcourses.berkeley.edu/courses/1513233/pages/data-project
+
+
+* each answer in a new page
+* You must indicate on Gradescope which questions are on which pages.
+* questions are pasted below
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Install pacman to help manage installation and loading of additional libraries
+    
+    https://www.rdocumentation.org/packages/pacman/versions/0.5.1
+    pacman provides wrapper function like p_load() to install package if needed, then load the library 
+    
+```{r install_pacman}
+install.packages( "pacman" )
+library(pacman) 
+p_load( readxl )
+p_load( gridExtra )
+p_load( broom )
+```
+
+
+
+\newpage
+
+
+
+Questions:
+1. [2 marks] What is the problem your are addressing with these data? State the question you are trying
+to answer and let us know what type of question this is in terms of the PPDAC framework.
+
+
+
+PPDAC stands for Problem, Plan, Data Analysis, and Conclusion. 
+Problem: What is the optimal timing of delayed cord clamping (DCC) in order to offer very preterm infants to maximize placental transfusion without interfering with stabilization and resuscitation.
+Outcomes that were observed in the study we selected for data included: neonatal death, intraventricular hemorrhage, hematocrit level, delivery room intubation, hypothermia, need for surfactant therapy, intubation in first 24 hrs, any intubation during hospitalization, development of chronic lung disease, late onset sepsis, any red blood cell transfusion during hospitalization, necrotizing enterocolitis, and severe retinopathy of prematurity. The hypothesis was that prolonged (60-75 sec) delayed cord clamping would offer improved outcomes compared to shorter (30-45 sec) clamping without complications of desaturation or stabilization.
+
+This was a causative/etiological question since we wanted to know whether changing the exposure/intervention (i.e. longer cord clamping) would result in changed outcomes. 
+
+
+
+
+\newpage
+
+2. [2 marks] What is the target population for your project? Why was this target chosen i.e., what was
+your rationale for wanting to answer this question in this specific population?
+
+
+The target population is very preterm infants (i.e. infants born at <32 weeks gestation) in the United States spontaneously breathing at birth. Very premature infants require stabilization and are at a high risk for requiring resuscitation at birth. This target population was chosen because the location where the data was collected serves a high-risk obstetric population, where they treat a large number of very preterm infants at the Santa Clara Valley Medical Center with a regional level III Neonatal Intensive Care Unit (NICU). 
+More broadly, our Prob/Stat team chose this population because improving preterm health care is a relevant and current public health problem particularly in underserved populations. 
+
+
+
+\newpage
+
+
+3. [2 marks] What is the sampling frame used to collect the data you are using? Describe why you think
+this sampling strategy is appropriate for your question. To what group(s) would you feel comfortable
+generalizing the findings of your study and why.
+
+
+The sampling frame included very preterm infants born between January 2008 and April 2014 at the Santa Clara Valley Medical Center. The sample included a total n of 353 infants, 187 in group 30-45 seconds DCC and 166 in group 60-75 seconds DCC. 30-45 seconds group was done from 2008-2011 and 60-75 seconds group was done from 2011-2014. This sampling strategy was appropriate because the sample was large enough to meet precalculated power requirements and included very preterm infants which is the population that we wanted to study. Additionally, there were no significant differences in baseline demographic characteristics between the exposed group (60-75 seconds DCC) and unexposed group (30-45 seconds group), allowing improved comparison between outcomes with respect to interventions. The findings of this study would likely generalize to other very preterm infants spontaneously breathing at birth in a hospital setting with a level III NICU in the United States, but more studies are warranted to confirm these results. It is unclear whether these findings would generalize to outside the hospital setting, e.g. home births, given there could be confounding variables from other interventions in the hospital setting that were not analyzed.
+
+
+
+\newpage
+
+4. [2 marks] Write a brief description (1-4 sentences) of the source and contents of your dataset. Provide a
+URL to the original data source if applicable. If not (e.g., the data came from your internship), provide
+1-2 sentences saying where the data came from. If you completed a web form to access the data and
+selected a subset, describe these steps (including any options you selected) and the date you accessed
+the data.
+
+Data is available through paper citation  https://www-ncbi-nlm-nih-gov.proxy.lib.uiowa.edu/pmc/articles/PMC4577121/pdf/pone.0138829.pdf 
+or directly through this website https://datadryad.org/stash/dataset/doi:10.5061/dryad.4q3d3
+
+The data came from a prospective clinical study performed in the Santa Clara Valley Medical Center, as described above, that was published in PLOS One. The hospital had developed a standardized delivery room management “bundle” or protocol in 2007 prior to the start of this study. Very preterm infants spontaneously breathing at birth were managed using this bundle with the only difference in this study being timing of delayed cord clamping, 30-45 seconds from Jan 2008-March 2011, or 60-75 seconds from March 2011-April 2014; in that way, the infants were randomized. The dataset falls into three categories: demographics, cord clamping (30-45 seconds group vs 60-75 seconds group) and neonatal outcomes data. There were no significant differences between the two infant groups with respect to gestational age, body weight at birth, receiving antenatal steroids, birth by Caesarian section, or percentage of male sex. Outcomes (as described above) were identified for each patient during their hospitalization.
+
+
+
+\newpage
+
+
+5. [1 mark] Write code below to import your data into R. Assign your dataset to an object.
+
+
+Loading data: 
+
+```{r load}
+
+library(readxl)
+library(dplyr)
+song = read_xlsx("Song_DCC_PlosOne_datadryad9.16.15.xlsx")
+
+```
+
+
+Optional part, poking around the data to get the lay of the land
+
+```{r feeling the data}
+#summary(song)
+str(song)
+set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
+#View(song)
+```
+
+\newpage
+
+
+6. [3 marks] Use code in R to answer the following questions:
+i) What are the dimensions of the dataset?
+
+
+```{r data_dim}
+dim(song)
+```
+
+Answer provided by R: 353 rows, 36 columns.
+
+
+ii) Provide a list of variable names.
+
+
+The variables are listed in the docx that came with the data:
+data access: 
+
+SongDCC_PlosOne_datadryad9.16.15 ReadMe File
+
+Studyid	
+Bw – birth weight in grams
+Ga – gestational age in weeks at birth
+Dcc – delayed cord clamping, 1=yes, 0=no
+Groups-study groups (1=DCC 30-45s, 2=DCC 60-75s)
+Sex – 1= female, 2=male
+Multiples = multiple pregnancy, 1=yes, 0=no
+Inoutborn – 1=inborn
+ans – antenatal steroids, 1=yes, 0=no
+ans48 – antenatal steroids >48hours prior to delivery, 1=yes, 0=no
+vag – vaginal delivery, 1=yes, 0=no
+apgar1 – 1 minute apgar
+apgar5 – 5 minute apgar
+etippv – delivery room intubation and positive pressure ventilation, 1=yes, 0=no
+drccompmeds – delivery room chest compressions and/or resuscitation medications, 1=yes, 0=no
+atemp – admission temperature in Celsius
+hypothermia - <36 degree Celsius on admission, 1=yes, 0=no
+hct2 – hematocrit in the first 2 hours of life
+hct1236 – hematocrit between 12-36 hours of life
+surfactant - 1=yes, 0=no
+pneumothorax - 1=yes, 0=no
+intub1d – intubation within 24 hours of life, 1=yes, 0=no
+anyintub – intubation any time during the NICU stay, 1=yes, 0=no
+anytransfusion – any pRBC transfusion during the NICU stay, 1=yes, 0=no
+pkbili – peak bilirubin, mg/dl
+polycythemia – hematocrit >65, 1=yes, 0=no
+died - 1=yes, 0=no	
+anyivh – any intraventricular hemorrhage (grade 1-4), 1=yes, 0=no
+sevivh – severe intraventricular hemorrhage (grade 3 or 4), 1=yes, 0=no
+los	 - late onset sepsis, 1=yes, 0=no
+anyrop – retinopathy of prematurity (stage 1-3), 1=yes, 0=no
+severerop-severe retinopathy of prematurity (grade 3 or threshold disease or received anti VEGF treatment or laser treatment for ROP), 1=yes, 0=no
+anynec – necrotizing enterocolitis, 1=yes, 0=no
+anycld- chronic lung disease, 1=yes, 0=no
+survwithoutmajormorbidity – survival without severe intraventricular hemorrhage, severe retinopathy of prematurity, late onset sepsis, necrotizing enterocolitis or chronic lung disease, 1=yes, 0=no
+
+
+```{r var_list}
+colnames(song)
+```
+
+iii) Print the first six rows of the dataset.
+
+```{r first_six_rows}
+head(song,6)
+```
+
+\newpage
+
+7. [4 marks] Use the data to demonstrate a statistical concept from Part I of the course. Describe the
+concept that you are demonstrating and interpret the findings. This should be a combination of code
+and written explanation.
+
+We hypothesized that birth weight and gestational age would have a direct positive correlation. Both of these are continuous variables, as such, we made scatter plots and performed linear regressions to identify if a linear model applied to this data. We also converted the variables to a log scale to improve the visualization of the relationship.  What we found is that converting  birth weight to a log scale yielded a slightly better R-squared correlation score than leaving it in linear scale.  This is not a huge improvement, since R^2 was still only at about 0.69, but the data points in the XY scatter plots does seem to have a more uniform spread from the lm() abline in this case.
+
+For future parts of the project, we will evaluate other relationships of the data and further investigate birth weight, gestational period, delayed cord clamping and preterm outcome. 
+
+
+```{r plot}
+
+library(ggplot2)
+library(tidyverse)
+library(broom)
+library(gridExtra)  # provides the grid.arrange() fn to display multiple plots on same graph
+
+song_lm         = lm(     bw  ~     ga,  song )
+song_lm_logbw   = lm( log(bw) ~     ga,  song )
+song_lm_logga   = lm(     bw  ~ log(ga), song )
+
+icept = song_lm$coefficients[[1]]
+slp   = song_lm$coefficients[[2]]
+icept_logbw   = song_lm_logbw$coefficients[[1]]
+slp_logbw     = song_lm_logbw$coefficients[[2]]
+icept_logga   = song_lm_logga$coefficients[[1]]
+slp_logga     = song_lm_logga$coefficients[[2]]
+
+rsq         <- glance( song_lm         ) %>% pull(r.squared) %>% round(4)
+rsq_logbw   <- glance( song_lm_logbw   ) %>% pull(r.squared) %>% round(4)
+rsq_logga   <- glance( song_lm_logga   ) %>% pull(r.squared) %>% round(4)
+
+xy = ggplot( data=song, aes(x=ga, y=bw)) +  geom_point() +
+  geom_abline( intercept=icept,     slope=slp,     col="blue",  lty=2 ) + 
+  labs( title=paste("R²=", rsq ), x="Gestation (week)", y="Birth Weight (g)")
+
+xybw   = ggplot( data=song, aes(x=ga, y=log(bw))) +  geom_point() +
+  geom_abline( intercept=icept_logbw, slope=slp_logbw, col="cyan", lty=1 ) +
+  labs( title=paste("R²=", rsq_logbw ), x="Gestation (week)", y="Log of Birth Weight (g)")
+
+xyga   = ggplot( data=song, aes(x=log(ga), y=bw)) +  geom_point() +
+  geom_abline( intercept=icept_logga, slope=slp_logga, col="green", lty=1 ) +
+  labs( title=paste("R²=", rsq_logga ), x="Log of Gestation (week)", y="Birth Weight (g)")
+
+grid.arrange(xy,xybw,xyga, nrow=2, top="Gestational Age vs Birth Weight")
+
+```
+
+
+
