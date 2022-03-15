@@ -1,7 +1,7 @@
 ### just copied from prj1, rename fix tbd.  sid redacted for now
 
 ---
-title: "PHW142 Stat for Public Health, Project #1"
+title: "PHW142 Stat for Public Health, Project #2"
 author:
  - Rachel Dahl
  - Sharon Drost 
@@ -11,9 +11,12 @@ author:
 Gruop ID: 23
 GSI: Gene Ho
 Professor: Dr Mi-Suk Kang Dufour
-date: "2022-03-07"
-output: pdf_document
+date: "2022-03-14"
+
+output: html_document
 ---
+
+##output: pdf_document
 
 Data project 1, Due March 7.
 
@@ -22,7 +25,7 @@ Title: "PHW142 Stat for Public Health, Project #1"
 Subtitle: "Delayed cord clamping and preterm birth outcome" 
 
 
-Team members and Student IDs:
+Team members and Student IDs (TBD):
  
  
 Rachel Dahl 30
@@ -43,9 +46,9 @@ Professor: Dr Mi-Suk Kang Dufour
 
 ~~~~~
 
-Instructions from part1-instructions-1.pdf
-https://bcourses.berkeley.edu/courses/1513233/pages/data-project
+Instructions for part 2:
 
+https://bcourses.berkeley.edu/courses/1513233/files/82690423/download?download_frd=1
 
 * each answer in a new page
 * You must indicate on Gradescope which questions are on which pages.
@@ -63,12 +66,19 @@ knitr::opts_chunk$set(echo = TRUE)
     pacman provides wrapper function like p_load() to install package if needed, then load the library 
     
 ```{r install_pacman}
-install.packages( "pacman" )
+if( !require("pacman") ) {
+  install.packages( "pacman", repos = "http://cran.us.r-project.org" )
+}
 library(pacman) 
 p_load( readxl )
 p_load( gridExtra )
 p_load( broom )
 ```
+
+
+
+_we need to include answer from project 1 here, at head or tail?_
+
 
 
 
@@ -272,6 +282,106 @@ xyga   = ggplot( data=song, aes(x=log(ga), y=bw)) +  geom_point() +
 grid.arrange(xy,xybw,xyga, nrow=2, top="Gestational Age vs Birth Weight")
 
 ```
+
+\newpage
+
+
+------
+Part 2
+------
+
+
+1. [1 mark] Include your work for Part I.
+
+I guess include in head then :)    #Q4Gene
+
+_see above :)_
+
+
+
+
+
+
+\newpage
+
+2. [2 marks] Describe a quantity you will estimate as an outcome in your problem using probability
+
+notation. Are you planning to calculate marginal probabilities? Conditional probabilities?
+
+
+
+
+
+
+Something about DCC vs ??  The doctors please help here! -Tin :)
+
+
+```{r Q2.2}
+
+str(song)
+set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
+
+cord_clamp_sample10 = song %>% sample_frac(0.1 )
+cord_clamp_sample1  = song %>% sample_frac(0.01)
+
+```
+
+\newpage
+
+3. [3 marks] Describe the type of theoretical distribution that is relevant for your data.
+
+•
+What type of variable(s) are you investigating (continuous, categorical, ordinal, etc)?
+
+	Some are categorical, eg died, groups, sex, los.
+	others are continuous, eg ga, bw
+	
+	Because the way how R imported the source data file, most of the data were read as string (part of the problem maybe spaces).  Overall, mapping function is used to create extra columns that contain data that R correctly parse into categories.  eg:
+
+
+```{r category remap}
+song_ext = 
+song %>% mutate(      diedTF    = case_when( died==0   ~ FALSE    , died==1   ~ TRUE   ) ,
+                      groupsCat = case_when( groups==1 ~ "One"    , groups==2 ~ "Two"  ) ,
+                      losCat    = case_when( los==1    ~ "One"    , los==0    ~ "Zero" ) ,
+                      sexCat    = case_when( sex==1    ~ "Female" , sex==2    ~ "Male" ) 
+                      )
+
+str(song)
+str(song_ext)
+
+## but these may not show poisson distribution stuff
+## 
+ggplot(data=song_ext, aes(x=sexCat)) +
+  geom_bar( aes(fill=diedTF),  position="dodge" )
+
+ggplot(data=song_ext, aes(x=)) +
+  geom_bar( aes(fill=sexCat),  position="dodge" )
+
+
+#geom_bar( aes(fill=diedTF), stat="identity", position="dodge" )
+
+#### maybe do a facet_wrap with ga ??  hypothermia ??  survwithoutmajormorbidity  ?
+
+
+
+
+```
+
+•
+What theoretical distribution that we have talked about would potentially be appropriate to use with
+
+these data (Normal, Binomial, Poisson. . . )
+
+•
+Why is this an appropriate model for the data you are studying?
+
+4. [4 marks] Use the data you have to demonstrate a statistical concept from Part II of the course. Describe
+
+the concept that you are demonstrating and interpret the findings. This may include code in R, a visual
+
+of some kind and text interpretation.
+
 
 
 
