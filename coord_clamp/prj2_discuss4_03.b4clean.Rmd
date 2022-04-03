@@ -1,3 +1,7 @@
+### top part is just copy from project 1 (part 1)  
+### part 2 content in lower part, starting around line 290.
+### sid redacted for now
+
 ---
 title: "PHW142 Stat for Public Health, Project #2"
 author:
@@ -16,9 +20,9 @@ output: html_document
 
 ##output: pdf_document
 
-Data project 2, Due Apr 4.
+Data project 1, Due March 7.
 
-Title: "PHW142 Stat for Public Health, Project #2"
+Title: "PHW142 Stat for Public Health, Project #1"
 
 Subtitle: "Delayed cord clamping and preterm birth outcome" 
 
@@ -42,13 +46,16 @@ GSI: Gene Ho
 
 Professor: Dr Mi-Suk Kang Dufour
 
-
-Top part is just copy from project 1 (part 1)  
-Part 2 content in lower part, starting around line 275.
-
 ~~~~~
 
-\newpage
+Instructions for part 2:
+
+https://bcourses.berkeley.edu/courses/1513233/files/82690423/download?download_frd=1
+
+* each answer in a new page
+* You must indicate on Gradescope which questions are on which pages.
+* questions are pasted below
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -69,6 +76,13 @@ p_load( readxl )
 p_load( gridExtra )
 p_load( broom )
 ```
+
+
+
+_we need to include answer from project 1 here, at head or tail?_
+
+
+
 
 \newpage
 
@@ -293,7 +307,7 @@ We would like to determine the probability of patiend died given s/he used the t
 
 
 2x2                   |  Death=Yes | Death=No | Margin        |
-----------------------|------------|----------|---------------|
+----------------------+------------+----------+---------------+
 DCC Group=1 (30-45s)  | A:    9    | B:   178 | A+B:      187 |
 DCC Group=2 (60-75s)  | C:    8    | D:   158 | C+D:      166 |
 Margin                | A+C: 17    | B+D: 336 | A+B+C+D:  353 |
@@ -303,13 +317,33 @@ Margin                | A+C: 17    | B+D: 336 | A+B+C+D:  353 |
 This is a conditional probability based on exposure to shorter or longer delayed cord clamping. The deaths per groups are shown in the Table above. The probability that a patient died conditional on exposure is :
 
 P( Death=Yes | DccGroup=1 ) = a / (a+b) = 9/187 = 0.04812834 or 4.81%
-
 P( Death=Yes | DccGroup=2 ) = c / (c+d) = 8/166 = 0.04819277 or 4.82%
 
 Overall, we observe that the conditional probability is approximately the same in either group.
 
 
 The R code to query the data to create the 2x2 contingency table is below.
+
+
+```{r category remap}
+library(ggplot2)
+
+## may not be needed after all
+song_ext = song %>% mutate(      
+  diedCat                      = case_when( died==0   ~ FALSE    , died==1   ~ TRUE   ) ,
+  groupsCat                    = case_when( groups==1 ~ "30-45s" , groups==2 ~ "60-75s"  ) ,
+  losCat                       = case_when( los==1    ~ "One"    , los==0    ~ "Zero" ) ,
+  dccCat                       = case_when( dcc==1    ~ "Yes"    , dcc==0    ~ "No"   ) ,  # only dcc==1 is avail
+  hypothermiaCat               = case_when( hypothermia==1    ~ "Yes", hypothermia==0    ~ "No"   ) ,
+  anytransfusionCat            = case_when( anytransfusion==1    ~ "Yes", anytransfusion==0    ~ "No"   ) ,
+  sexCat                       = case_when( sex==1    ~ "Female" , sex==2    ~ "Male" ) , 
+  survwithoutmajormorbidityCat = case_when( survwithoutmajormorbidity==1  ~ "Yes"    , survwithoutmajormorbidity==0    ~ "No"   )
+  ) 
+
+
+
+```
+
 
 ```{r constructing 2x2}
 
@@ -328,6 +362,12 @@ song      %>% group_by( died    ) %>% tally()
 # a+b+c+d
 song %>% tally()
 
+
+# cross check for b, d:
+song      %>% filter( died == 0 ) %>% group_by( groups  )  %>% tally()
+
+
+
 ```
 
 \newpage
@@ -345,7 +385,6 @@ I. A variable is any characteristic of an individual. Categorical variables have
 II. Data can be described using different distributions such as Normal, Binomial, and Poisson. Normal distribution is a Continuous Distribution, Binomial 
 and Poisson are Discrete Probability Distributions. For our data set, Normal Distribution would potentially be appropriate to use. 
 
-
 III. Normal Distribution is appropriate for our analysis of hemotocrit levels (hct2), which is a continuous data type. 
 We have mean (µ) and standard deviation (σ) for this data set, thus describing the main statistics for  Normal distribution 
 To further check whether our hct2 data follows a Normal distribution, we first plotted the data as a histogram.  Visually, the plot looks approximately like a symetric bell curve, fairly well centered in the middle for mean µ and not skewed.  We acknowledge that there are a few outliers. These may be due to measurement error because the corresponding Hematocrit values would be physiologically improbable. 
@@ -353,7 +392,9 @@ To further check whether our hct2 data follows a Normal distribution, we first p
 
 ```{r NormDist-for-group-consideration}
 
-ggplot(data=song, aes(x=hct2)) +  geom_histogram( bins=30 ) 
+#ggplot(data=song_ext, aes(x=hct2)) +  geom_histogram( bins=30 ) + facet_wrap( ~ groupsCat )
+
+ggplot(data=song_ext, aes(x=hct2)) +  geom_histogram( bins=30 ) 
 
 ```
 
@@ -373,13 +414,11 @@ We want to determine if using longer cord clamping time (those in group 2) would
 Statistically, our Null and Alternative Hypothesis are:
 
 H_o:   mean hct2 of group 2 = 48.25    
-
 H_alt: mean hct2 of group 2 > 48.25 
  
 Clinically, this is what our hypothesis means:
  
 H_o:   mean hct2 of group 2 (longer delayed cord clamping) = mean hct2 of entire group combined (shorter and longer DCC) = 48.25    
-
 H_alt: mean hct2 of group 2 (longer delayed cord clamping) > 48.25 
 
 This was a one-sided hypothesis test and we would use alpha = 0.05. 
@@ -390,8 +429,12 @@ Next we calculate the z-statistic to determine whether the mean of the longer de
 
 
 ```{r mean_vs_median}
-
 library(dplyr)
+
+#### Outliers: any data point more than 1.5*IQR away from median.
+#### IQR: InterQuartile Range: Q1-Median or Q3-Median
+#### summary(song$hct2) same result as my block for "All" below, 27 rows have missing values
+
 
 cord_clamp_All = song 
 Min    = min(       cord_clamp_All$hct2,               na.rm=T )
@@ -403,6 +446,23 @@ Max    = max(       cord_clamp_All$hct2,               na.rm=T )
 SD     = sd(        cord_clamp_All$hct2,               na.rm=T )
 
 seven_num_summary_All =  c( min    = Min,
+                            Q1     = Q1,
+                            median = Median,
+                            mean   = Mean,
+                            sd     = SD,
+                            Q3     = Q3,
+                            max    = Max)
+
+cord_clamp_G1 = song %>% filter(groups==1)
+Min    = min(       cord_clamp_G1$hct2,               na.rm=T )
+Q1     = quantile(  cord_clamp_G1$hct2, probs = 0.25, na.rm=T )
+Median = median(    cord_clamp_G1$hct2,               na.rm=T )
+Mean   = mean(      cord_clamp_G1$hct2,               na.rm=T )
+Q3     = quantile(  cord_clamp_G1$hct2, probs = 0.75, na.rm=T )
+Max    = max(       cord_clamp_G1$hct2,               na.rm=T )
+SD     = sd(        cord_clamp_All$hct2,              na.rm=T )
+
+seven_num_summary_G1  =  c( min    = Min,
                             Q1     = Q1,
                             median = Median,
                             mean   = Mean,
@@ -430,29 +490,28 @@ seven_num_summary_G2  =  c( min    = Min,
                             max    = Max)
 
 
+
 round( seven_num_summary_All, 2 )
+round( seven_num_summary_G1,  2 ) 
 round( seven_num_summary_G2,  2 ) 
+
+
 
 ```
 
-From the above, we observe that:
+
+Z test:
+z = ((x-bar - mu) / (sigma/sqrt(n) ) 
 
 x-bar : 49.19
+mu : 48.25
+Sigma: sd = 7.03
+n : 151 (group 2 count - missing data )
+There were 166 patients within the longer delayed group. Fifteen hematocrit values were missing among this group, so our n = 166 - 15 = 151. To calculate our z-statistic, we used this equation:
 
-mu    : 48.25
 
-Sigma : sd = 7.03
-
-n     : 151 (group 2 count - missing data )
-
-There were 166 patients within the longer delayed group. Fifteen hematocrit values were missing among this group, so our n = 166 - 15 = 151. 
-
-To calculate our z-statistic, we used this equation:
-
-z = ( (x-bar - mu) / (sigma/sqrt(n) ) 
 
 z = (49.19-48.25)/(7.03/sqrt(151))= 1.643089
-
 And then used the pnorm function in R to calculate the p-value:
 
 ```{r calculate p-value}
