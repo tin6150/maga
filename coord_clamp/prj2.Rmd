@@ -11,7 +11,7 @@ GSI: Gene Ho
 Professor: Dr Mi-Suk Kang Dufour
 date: "2022-03-14"
 
-output: html_document
+output: word_document
 ---
 
 ##output: pdf_document
@@ -25,16 +25,15 @@ Subtitle: "Delayed cord clamping and preterm birth outcome"
 
 Team members and Student IDs (TBD):
  
- 
-Rachel Dahl 30343
+Rachel Dahl 303
 
-Sharon Drost 30375
+Sharon Drost 303
 
-Habiba Afrin 30364
+Zhigang Ma 303
 
-Zhigang Ma 30364
+Habiba Afrin 303
 
-Tin Ho 30
+Tin Ho 303
 
 Gruop ID: 23
 
@@ -336,16 +335,20 @@ song %>% tally()
 3. [3 marks] Describe the type of theoretical distribution that is relevant for your data.
 
 • What type of variable(s) are you investigating (continuous, categorical, ordinal, etc)?
-• What theoretical distribution that we have talked about would potentially be appropriate to use with these data (Normal, Binomial, Poisson. . . )
-• Why is this an appropriate model for the data you are studying?
-
 
 I. A variable is any characteristic of an individual. Categorical variables have grouping levels and Quantitative variables are numeric variables. This data set have mainly Quantitative variables such as gestational age (Ga), birth weight (Bw), hematocrit (hct2), etc.  Furthermore, Ga is a Discrete Quantitative variable meaning this variable can be counted. Bw and hct are Continuous Quantitative variables that can be measured precisely. 
 
+\newpage
+
+• What theoretical distribution that we have talked about would potentially be appropriate to use with these data (Normal, Binomial, Poisson. . . )
 
 II. Data can be described using different distributions such as Normal, Binomial, and Poisson. Normal distribution is a Continuous Distribution. Binomial and Poisson are Discrete Probability Distributions. 
 For our data set, Normal Distribution would potentially be appropriate to use. We will illustrate later in document.
 
+
+\newpage
+
+• Why is this an appropriate model for the data you are studying?
 
 III. Normal Distribution is appropriate for our analysis of hematocrit levels (hct2), which is a continuous data type. 
 We have mean (µ) and standard deviation (σ) for this data set, thus describing the main statistics for a Normal distribution. To further check whether our hct2 data follows a Normal distribution, we first plotted the data as a histogram.  Visually, the plot looks approximately like a symmetric bell curve, fairly well centered in the middle for mean µ and not skewed.  We acknowledge that there are a few outliers. These may be due to measurement error because the corresponding Hematocrit values would be physiologically improbable. 
@@ -363,6 +366,11 @@ Lastly, we create a QQ plot of the hct2 data, and observes that most points trac
 ggplot(data=song, aes(sample=hct2)) + stat_qq() + stat_qq_line()  
 
 ```
+
+\newpage
+
+[previous newpage did not take, hopefully didn't introduce a blank page now with a 2nd newpage]
+
 \newpage
 
 4. [4 marks] Use the data you have to demonstrate a statistical concept from Part II of the course. Describe the concept that you are demonstrating and interpret the findings. This may include code in R, a visual of some kind and text interpretation.
