@@ -26,13 +26,13 @@ Subtitle: "Delayed cord clamping and preterm birth outcome"
 Team members and Student IDs (TBD):
  
  
-Rachel Dahl 30
+Rachel Dahl 30343
 
-Sharon Drost 30
+Sharon Drost 30375
 
-Habiba Afrin 30
+Habiba Afrin 30364
 
-Zhigang Ma 30
+Zhigang Ma 30364
 
 Tin Ho 30
 
@@ -108,7 +108,8 @@ this sampling strategy is appropriate for your question. To what group(s) would 
 generalizing the findings of your study and why.
 
 
-The sampling frame included very preterm infants born between January 2008 and April 2014 at the Santa Clara Valley Medical Center. The sample included a total n of 353 infants, 187 in group 30-45 seconds DCC and 166 in group 60-75 seconds DCC. 30-45 seconds group was done from 2008-2011 and 60-75 seconds group was done from 2011-2014. This sampling strategy was appropriate because the sample was large enough to meet precalculated power requirements and included very preterm infants which is the population that we wanted to study. Additionally, there were no significant differences in baseline demographic characteristics between the exposed group (60-75 seconds DCC) and unexposed group (30-45 seconds group), allowing improved comparison between outcomes with respect to interventions. The findings of this study would likely generalize to other very preterm infants spontaneously breathing at birth in a hospital setting with a level III NICU in the United States, but more studies are warranted to confirm these results. It is unclear whether these findings would generalize to outside the hospital setting, e.g. home births, given there could be confounding variables from other interventions in the hospital setting that were not analyzed.
+The sampling frame included very preterm infants born between January 2008 and April 2014 at the Santa Clara Valley Medical Center. The sample included a total n of 353 infants, 187 in group 30-45 seconds DCC and 166 in group 60-75 seconds DCC. 30-45 seconds group was done from 2008-2011 and 60-75 seconds group was done from 2011-2014. This sampling strategy was appropriate because the sample was large enough to meet pre-calculated
+ power requirements and included very preterm infants which is the population that we wanted to study. Additionally, there were no significant differences in baseline demographic characteristics between the exposed group (60-75 seconds DCC) and unexposed group (30-45 seconds group), allowing improved comparison between outcomes with respect to interventions. The findings of this study would likely generalize to other very preterm infants spontaneously breathing at birth in a hospital setting with a level III NICU in the United States, but more studies are warranted to confirm these results. It is unclear whether these findings would generalize to outside the hospital setting, e.g. home births, given there could be confounding variables from other interventions in the hospital setting that were not analyzed.
 
 
 
@@ -289,7 +290,7 @@ _see above :)_
 2. [2 marks] Describe a quantity you will estimate as an outcome in your problem using probability notation. Are you planning to calculate marginal probabilities? Conditional probabilities?
 
 
-We would like to determine the probability of patiend died given s/he used the the two different Delay Cord Clamp procedure (Group 1 vs 2).  We first create a 2x2 contingency table as:
+We would like to determine the probability that the patient died given s/he was exposed to either of the two different timings of Delayed Cord Clamp procedure (DCC) (Group 1 vs Group 2).  We first create a 2x2 contingency table as:
 
 
 2x2                   |  Death=Yes | Death=No | Margin        |
@@ -300,7 +301,7 @@ Margin                | A+C: 17    | B+D: 336 | A+B+C+D:  353 |
 
 
 
-This is a conditional probability based on exposure to shorter or longer delayed cord clamping. The deaths per groups are shown in the Table above. The probability that a patient died conditional on exposure is :
+This is a conditional probability based on exposure to shorter or longer delayed cord clamping. The deaths per groups are shown in the Table above. The probability that a patient died conditionally based on exposure type is :
 
 P( Death=Yes | DccGroup=1 ) = a / (a+b) = 9/187 = 0.04812834 or 4.81%
 
@@ -342,13 +343,12 @@ song %>% tally()
 I. A variable is any characteristic of an individual. Categorical variables have grouping levels and Quantitative variables are numeric variables. This data set have mainly Quantitative variables such as gestational age (Ga), birth weight (Bw), hematocrit (hct2), etc.  Furthermore, Ga is a Discrete Quantitative variable meaning this variable can be counted. Bw and hct are Continuous Quantitative variables that can be measured precisely. 
 
 
-II. Data can be described using different distributions such as Normal, Binomial, and Poisson. Normal distribution is a Continuous Distribution, Binomial 
-and Poisson are Discrete Probability Distributions. For our data set, Normal Distribution would potentially be appropriate to use. 
+II. Data can be described using different distributions such as Normal, Binomial, and Poisson. Normal distribution is a Continuous Distribution. Binomial and Poisson are Discrete Probability Distributions. 
+For our data set, Normal Distribution would potentially be appropriate to use. We will illustrate later in document.
 
 
-III. Normal Distribution is appropriate for our analysis of hemotocrit levels (hct2), which is a continuous data type. 
-We have mean (µ) and standard deviation (σ) for this data set, thus describing the main statistics for  Normal distribution 
-To further check whether our hct2 data follows a Normal distribution, we first plotted the data as a histogram.  Visually, the plot looks approximately like a symetric bell curve, fairly well centered in the middle for mean µ and not skewed.  We acknowledge that there are a few outliers. These may be due to measurement error because the corresponding Hematocrit values would be physiologically improbable. 
+III. Normal Distribution is appropriate for our analysis of hematocrit levels (hct2), which is a continuous data type. 
+We have mean (µ) and standard deviation (σ) for this data set, thus describing the main statistics for a Normal distribution. To further check whether our hct2 data follows a Normal distribution, we first plotted the data as a histogram.  Visually, the plot looks approximately like a symmetric bell curve, fairly well centered in the middle for mean µ and not skewed.  We acknowledge that there are a few outliers. These may be due to measurement error because the corresponding Hematocrit values would be physiologically improbable. 
 
 
 ```{r NormDist-for-group-consideration}
@@ -357,7 +357,7 @@ ggplot(data=song, aes(x=hct2)) +  geom_histogram( bins=30 )
 
 ```
 
-Lastly, we create a QQ plot of the hct2 data, and observes that most points track closely to the main diagonal, with a few points on the extremes that would corresponds to the outliers.  Given the bulk of the data "fits", we now have further evidence that the data follows a Normal distribution.
+Lastly, we create a QQ plot of the hct2 data, and observes that most points track closely to the main diagonal, with a few points on the extremes that would corresponds to the outliers.  Given that the bulk of the data "fits", we now have further evidence that the data follows a Normal distribution.
 ```{r qq plot}
 
 ggplot(data=song, aes(sample=hct2)) + stat_qq() + stat_qq_line()  
@@ -368,9 +368,9 @@ ggplot(data=song, aes(sample=hct2)) + stat_qq() + stat_qq_line()
 4. [4 marks] Use the data you have to demonstrate a statistical concept from Part II of the course. Describe the concept that you are demonstrating and interpret the findings. This may include code in R, a visual of some kind and text interpretation.
 
 
-We want to determine if using longer cord clamping time (those in group 2) would have a significantly higher mean hematocrit level than the mean of both delayed cord clamping groups combined. Hematocrit is defined as the percentage by volume of packed red blood cells in a given sample of blood after centrifugation.
+We want to determine if using longer cord clamping time (for those in group 2) would be associated with a significantly higher mean hematocrit level than the mean of both delayed cord clamping groups combined. Hematocrit is defined as the percentage by volume of packed red blood cells in a given sample of blood after centrifugation.
 
-Statistically, our Null and Alternative Hypothesis are:
+Statistically, our Null and Alternative Hypotheses are:
 
 H_o:   mean hct2 of group 2 = 48.25    
 
@@ -378,11 +378,11 @@ H_alt: mean hct2 of group 2 > 48.25
  
 Clinically, this is what our hypothesis means:
  
-H_o:   mean hct2 of group 2 (longer delayed cord clamping) = mean hct2 of entire group combined (shorter and longer DCC) = 48.25    
+H_o:   mean hct2 of group 2 (longer delayed cord clamping) = mean hct2 of entire group combined (both shorter and longer DCC) = 48.25    
 
 H_alt: mean hct2 of group 2 (longer delayed cord clamping) > 48.25 
 
-This was a one-sided hypothesis test and we would use alpha = 0.05. 
+This was a one-sided hypothesis test, and we define alpha = 0.05. 
 
 Next we calculate the z-statistic to determine whether the mean of the longer delayed cord clamping group was significantly larger than the mean from the combined group mean.  For this, we used R to identify the means and standard deviation from each group (combined and group 2 alone).
 
@@ -443,7 +443,7 @@ mu    : 48.25
 
 Sigma : sd = 7.03
 
-n     : 151 (group 2 count - missing data )
+n     : 151 (group 2 count - missing data from group 2)
 
 There were 166 patients within the longer delayed group. Fifteen hematocrit values were missing among this group, so our n = 166 - 15 = 151. 
 
