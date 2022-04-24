@@ -1,5 +1,5 @@
 ---
-title: "PHW142 Stat for Public Health, Project #2"
+title: "PHW142 Stat for Public Health, Project #3"
 author:
  - Rachel Dahl
  - Sharon Drost 
@@ -9,16 +9,16 @@ author:
 Gruop ID: 23
 GSI: Gene Ho
 Professor: Dr Mi-Suk Kang Dufour
-date: "2022-03-14"
+date: "2022-04-24"
 
 output: word_document
 ---
 
 ##output: pdf_document
 
-Data project 2, Due Apr 4.
+Data project 3, Due May 2.
 
-Title: "PHW142 Stat for Public Health, Project #2"
+Title: "PHW142 Stat for Public Health, Project #3"
 
 Subtitle: "Delayed cord clamping and preterm birth outcome" 
 
@@ -41,9 +41,9 @@ GSI: Gene Ho
 
 Professor: Dr Mi-Suk Kang Dufour
 
-
 Top part is just copy from project 1 (part 1)  
-Part 2 content in lower part, starting around line 275, page 16.
+Part 2 content starts around line 275, page 16.
+Part 3 content starts around line 477
 
 ~~~~~
 
@@ -476,17 +476,34 @@ Our p-value of 0.05018226 does not quite reach our definition of significance be
 
 # =================== PART 3 =========================
 
-```{r part 3 draft}
+
+1. [2 marks] Identify a statistical test to apply to your data (must be a concept we covered in part III of
+the course). In plain language, write the question you are trying to answer.
+
+We used ANOVA. We wanted to determine whether Apgar5 scores within categories that we defined for this project as Low (0-6), Medium (7-8) or High (9-10) ranges are associated with measured hematocrit levels at 12-36 hours after birth.
+
+The APGAR test is a quick scoring system performed on observation of a newborn at 1 and 5 minutes after birth. The 1-minute score determines how well the baby tolerated the birthing process. The 5-minute score tells the health care provider how well the baby is doing independently outside the mother's womb. In rare cases, if the newborn is considered unstable, the test will be done 10 minutes after birth.
+
+Hematocrit (Hct) is defined as the volume of red blood cells compared to the volume of whole blood after centrifugation. Red blood cells carry oxygen throughout your body. Having too few or too many red blood cells can be a sign of certain diseases. The Hct level would give us insight on the health of the newborn at 5 minutes after birth and is used to prognosticate the morbidity and mortality of the newborn in the first week of life.
+
+Since Apgar5 is a categorical variable with 3 groups, and hematocrit is a continuous variable, ANOVA is a useful test for this dataset.
+
+
+```{r Part 3 Q1 }
+# the pacman library can install libraries (if not installed) before loading it
+# but pacman can't quite install itself, so next two lines may not be usable everywhere:
 #library(pacman)
 #p_load(forcats)
 
 library(forcats)
 
-
-# Lect 5 eg fct_relevel reorder by hand
-# shoe_data <- shoe_data %>% 
-#  mutate(shoe_support = fct_relevel(shoe_support, "good", "average", "poor"))
-
+# Here we start prepping the data for our data analysis
+# the data was contained by the variable "song_ext" prepared from previous assignment.
+# Here we drop records that has missing values (a fact of life according to data scientists)
+# apgar5 variable contain discrete scores from 0 to 10, 
+# we remap them to categories Low, Med, High, stored in a column called apgar5Cat 
+# We end by manually sorting the categories per human mental mind of L,M,H 
+# instead of alphabetically using  fct_relevel().
 
 song_ext = na.omit(song) %>%  
   mutate(  apgar5Cat  =   case_when(       apgar5==0  ~ "Low" , 
@@ -503,77 +520,158 @@ song_ext = na.omit(song) %>%
                                            ) ) %>%
   mutate( apgar5Cat = fct_relevel( apgar5Cat, "Low", "Med", "High" ))
 
-  
-
-apgarCounts = song_ext %>% count( apgar5Cat )
-# try to add these counts to the plot
-
-
-
-plot3cats = ggplot( data=song_ext, aes(y=hct1236,x=apgar5Cat)) +  geom_boxplot() + geom_jitter(width=0.1) +
-  labs( title=paste("title tbd ²=", apgarCounts ), x="5 minutes Apgar score", y="12-36 hours Hematocrit level")
-#labs( title=paste("title tbd ²=", apgarCounts ), x="x tbd", y="y tbd")
-
-plot3cats
-
-
-aov(hct1236 ~ apgar5Cat, data=song_ext) %>% tidy()
-
-TukeyHSD( aov(hct1236 ~ apgar5Cat, data=song_ext))
-
-
-# for kicker, trying the non parametric version of anova
-# it reports a k-w chi-sq stat, which seems more relatable
-kruskal.test(hct1236 ~ apgar5Cat, data=song_ext) 
-
-
-
-#t.test(song_ext$hct1236,song_ext$apgar5Cat, alternative="two.sided")  
-#t.test only allows for 2 groups
-# below still does not provide SD info.  calc by hand...   
-t.test(song_ext %>% filter(apgar5Cat=="Low") %>% pull(hct1236),
-       song_ext %>% filter(apgar5Cat=="Low") %>% pull(hct1236), 
-       alternative="two.sided")  
-
-
-SD_by_Apgar_Grp = song_ext %>% group_by(apgar5Cat) %>% 
-  summarize( SD = sd(hct1236),
-             n  = length(hct1236))
-SD_by_Apgar_Grp
-
-sd12 = SD_by_Apgar_Grp$SD[1] / SD_by_Apgar_Grp$SD[2]
-sd13 = SD_by_Apgar_Grp$SD[1] / SD_by_Apgar_Grp$SD[3]
-sd23 = SD_by_Apgar_Grp$SD[2] / SD_by_Apgar_Grp$SD[3]
-c(sd12, sd13, sd23)
-
-# Kruskal Wallis non parametric anova?  still need sample size for each SRS n>30.
-
-
 ```
 
-\newpage 
+\newpage
 
-Question 3
+2. [2 marks] What assumptions are required by the method you chose in 5.1? Show how you assessed
+whether these assumptions are met by your dataset. 
 
-```{r check for normality}
+For Anova we are required to make the following assumptions:
+
+* All samples are SRSs and independent of each other. We assume we can recover the probability of the examples that’s representative from each target group. The groups were designed in such a way that they are independent of each other.
+
+* Each of the sample groups are normally distributed: we have QQ plots for each group, and the data points track the main diagonal reasonably well, without huge outliers.  Each group has enough sample points with n >= 30.  
 
 
+```{r Part 2 Q2 check for normality}
 
-## QQ plot
+# Here we use ggplot stat_qq to produce QQ plots
+
+
+# But first gather the sample count for each categories, 
+# so that we can display this data as subtitle of the plot
+apgarCounts = song_ext %>% count( apgar5Cat )
+
+
+# facet_wrap create 3 panels for the 3 categories of Apgar5 data of Low,Med,High
+# QQ plot from Week 6 Lect 15 slide 9
 qq_plot = ggplot(data=song_ext, aes(sample=hct1236)) + stat_qq() + stat_qq_line() + facet_wrap( ~ apgar5Cat) +
-  labs( title="QQ plot for Hematocrit at 12-36 hours by APGAR5 categories", x="TBD", y="residuals")
+  labs( title="QQ plot for Hematocrit at 12-36 hours by APGAR5 categories", 
+        subtitle=paste("Sample size for Low,Med,High:", 
+                       apgarCounts$n[1], ", ", 
+                       apgarCounts$n[2], ", ", 
+                       apgarCounts$n[3]         ), 
+        x="z score", 
+        y="sample")
 
 qq_plot
 
 ```
 
 
+* All the populations have the same standard deviation σ.   While we do not know what is the σ of the population, all patients were drawn at random and we are not aware of any systematic segregation that would make different groups have different σ.  We are also following the rule of thumb to determine the ratio of largest vs smallest standard deviation, and found the ratio to be less than 2, thus giving us confidence that this condition is met.
+SDmax/SDmin = 10.197679/6.798941= 1.4998
+
+
+```{r Part 3 Q2 }
+
+# use group_be and summarize to determine group sample size and their std dev
+SD_by_Apgar_Grp = song_ext %>% group_by(apgar5Cat) %>% 
+  summarize( SD = sd(hct1236),
+             n  = length(hct1236))
+SD_by_Apgar_Grp
+
+# determine the ratio of the largest std dev vs the smallest
+sd.ratio = SD_by_Apgar_Grp$SD[1] / SD_by_Apgar_Grp$SD[3]
+sd.ratio
+
+
+```
+
+
+Overall, we have strong evidence to suggest that our data meets the conditions needed by the ANOVA tests and our result would be statistically rigorous.  
+
+\newpage
+
+3. [2 marks] Explain why this test is appropriate for the data you have and the question you are trying
+to answer. Use at least one visualization technique and include both the output and the R code that
+generated it.
+
+We have 3 categories for our Apgar5 data: Low, Medium, High.  Each group has a random sample of patients with different hematocrit levels (measured at the 12-36 hours), which is a continuous variable.  We would like to see if the hct level differs between these groups.  ANOVA would allow us to evaluate multi-categories data.  It has several assumptions, mostly centered around Normality and large enough samples, which we have met.  
+
+Let’s start by visualizing the spread of our data points:
+
+  
+```{r Part 3 Q3 }
+
+# We will use ggplot boxplot() to show the spread of the 3 groups of data
+# boxplot, with 
+# jitter so points are shown with random offset to make overlapping pts visible
+# subtitle data variable apgarCounts created two blocks back
+plot3cats = ggplot( data=song_ext, aes(y=hct1236,x=apgar5Cat)) +  
+  geom_boxplot() + geom_jitter(width=0.1) +
+  labs( title="Hematocrit at 12-36 hours across APGAR5 categories", 
+        subtitle=paste("Sample size for Low,Med,High:", 
+                       apgarCounts$n[1], ", ", 
+                       apgarCounts$n[2], ", ", 
+                       apgarCounts$n[3]         ), 
+        x="5 minutes Apgar score", 
+        y="12-36 hours Hematocrit level")
+
+
+plot3cats
+```
+We can see that the spread of the data among all 3 groups are about the same, which is expected since we have already found that SDmax/SDmin < 2.  The IQR of the 3 groups overlap, and visually the mean value differs slightly between them.  Whether the differences are statistically significant will be tackled next.
+
+\newpage
+
+
+4. [2 marks] Clearly state the null and alternative hypotheses for this test.
+
+Null Hypothesis: There is no difference of mean value of Hematocrit measured at 12-36 hours (Hct1236) among the 3 levels of 5 minutes Apgar score categories (apgar5cat) of low(u1), medium(u2) and high(u3). 
+H0: u1=u2=u3
+The alternative hypothesis is that at least one mean value of Hct1236 is different from other groups.
+Ha: u1≠u2≠u3, or u1≠u2, or u1≠ u3, or u2≠u3 
+
+\newpage
+
+
+5. [2 marks] Include the R code you used to generate your results. Annotate your code to help us follow
+your reasoning.  
+
+With the preparation code up to this point, we can now calculate the ANOVA F-score for our data:
+
+
+
+```{r anova}
+
+# we use aov() function to perform ANOVA test.  
+# data has been prepared and stored in the song_ext data frame.  
+# result of aov() is piped thru tidy for easier readability
+aov( hct1236 ~ apgar5Cat, data=song_ext ) %>% tidy()
+``` 
+
+Here we see that the F-statistics is 9.59, with a very low p.value of 0.0001, which is much smaller than a typical alpha threshold of 0.05.  Thus, we have evidence to support rejecting the null.  
+
+
+\newpage
+
+6. [4 marks] Present your results in a clear summary. This should include both a text summary and a
+table or figure with appropriate labeling. 
+
+After finding there is support for the  alternative hypothesis, we proceed to do pairwise comparisons of the various apgar5 groups.  We will use the TukeyHSD() function in R to help automate this work:
+
+
+
+```{r turkey}
+TukeyHSD( aov(hct1236 ~ apgar5Cat, data=song_ext))
+
+```
+The results from Tukey HSD test performed with a 95% confidence level displayed significant differences between the medium (n=103) and low (n=36) APGAR groups and between the high (n=77) and low APGAR groups, with p<0.05 for both comparisons. There was a trend that did not quite reach significance for difference between high and medium APGAR groups, with adjusted p=0.06.
+
+
+\newpage 
+
+7. [4 marks] Interpret your findings. Include a statement about the evidence, your conclusions, and the
+generalizability of your findings.  
+
+Based on our statistical findings, we reject the null hypothesis and support the alternate hypothesis that higher APGAR scores (APGAR 5 min) are associated with higher hematocrit levels in newborns at 12-26 hours after birth. Higher hematocrit levels are associated with more favorable outcomes with regard to morbidity and mortality in this population of very preterm infants (i.e.infants born at <32 weeks gestation) in the United States spontaneously breathing at birth (Fogarty, et al., 2018). Very premature infants require stabilization and are at a high risk for requiring resuscitation at birth. This target population was chosen because the location where the data was collected serves a high-risk obstetric population, where they treat a large number of very preterm infants at the Santa Clara Valley Medical Center with a regional level III Neonatal Intensive Care Unit (NICU). More broadly, our small group chose this population because the results would generalize to similar populations. Improving preterm health care is a relevant and current public health problem particularly in underserved populations.
+
+
 # References
 
-... we have at least 2 entries.
-
-++ The song  paper itself
-
-
 Fogarty, M., Osborn, D. A., Askie, L., Seidler, A. L., Hunter, K., Lui, K., Simes, J., & Tarnow-Mordi, W. (2018). Delayed vs early umbilical cord clamping for preterm infants: a systematic review and meta-analysis. American journal of obstetrics and gynecology, 218(1), 1–18. https://doi-org.proxy.lib.uiowa.edu/10.1016/j.ajog.2017.10.231
+
+Song, Dongli; Jegatheesan, Priya; DeSandre, Glenn; Govindaswami, Balaji (2016), Data from: Duration of cord clamping and neonatal outcomes in very preterm infants, Dryad, Dataset, https://doi.org/10.5061/dryad.4q3d3
 
