@@ -1,0 +1,579 @@
+---
+title: "PHW142 Stat for Public Health, Project #2"
+author:
+ - Rachel Dahl
+ - Sharon Drost 
+ - Habiba Afrin
+ - Zhigang Ma
+ - Tin Ho
+Gruop ID: 23
+GSI: Gene Ho
+Professor: Dr Mi-Suk Kang Dufour
+date: "2022-03-14"
+
+output: word_document
+---
+
+##output: pdf_document
+
+Data project 2, Due Apr 4.
+
+Title: "PHW142 Stat for Public Health, Project #2"
+
+Subtitle: "Delayed cord clamping and preterm birth outcome" 
+
+
+Team members and Student IDs (TBD):
+ 
+Rachel Dahl 303
+
+Sharon Drost 303
+
+Zhigang Ma 303
+
+Habiba Afrin 303
+
+Tin Ho 303
+
+Gruop ID: 23
+
+GSI: Gene Ho
+
+Professor: Dr Mi-Suk Kang Dufour
+
+
+Top part is just copy from project 1 (part 1)  
+Part 2 content in lower part, starting around line 275, page 16.
+
+~~~~~
+
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Install pacman to help manage installation and loading of additional libraries
+    
+    https://www.rdocumentation.org/packages/pacman/versions/0.5.1
+    pacman provides wrapper function like p_load() to install package if needed, then load the library 
+    
+```{r install_pacman}
+if( !require("pacman") ) {
+  install.packages( "pacman", repos = "http://cran.us.r-project.org" )
+}
+library(pacman) 
+p_load( readxl )
+p_load( gridExtra )
+p_load( broom )
+```
+
+\newpage
+
+
+
+Questions:
+1. [2 marks] What is the problem your are addressing with these data? State the question you are trying
+to answer and let us know what type of question this is in terms of the PPDAC framework.
+
+
+
+PPDAC stands for Problem, Plan, Data Analysis, and Conclusion. 
+Problem: What is the optimal timing of delayed cord clamping (DCC) in order to offer very preterm infants to maximize placental transfusion without interfering with stabilization and resuscitation.
+Outcomes that were observed in the study we selected for data included: neonatal death, intraventricular hemorrhage, hematocrit level, delivery room intubation, hypothermia, need for surfactant therapy, intubation in first 24 hrs, any intubation during hospitalization, development of chronic lung disease, late onset sepsis, any red blood cell transfusion during hospitalization, necrotizing enterocolitis, and severe retinopathy of prematurity. The hypothesis was that prolonged (60-75 sec) delayed cord clamping would offer improved outcomes compared to shorter (30-45 sec) clamping without complications of desaturation or stabilization.
+
+This was a causative/etiological question since we wanted to know whether changing the exposure/intervention (i.e. longer cord clamping) would result in changed outcomes. 
+
+
+
+
+\newpage
+
+2. [2 marks] What is the target population for your project? Why was this target chosen i.e., what was
+your rationale for wanting to answer this question in this specific population?
+
+
+The target population is very preterm infants (i.e. infants born at <32 weeks gestation) in the United States spontaneously breathing at birth. Very premature infants require stabilization and are at a high risk for requiring resuscitation at birth. This target population was chosen because the location where the data was collected serves a high-risk obstetric population, where they treat a large number of very preterm infants at the Santa Clara Valley Medical Center with a regional level III Neonatal Intensive Care Unit (NICU). 
+More broadly, our Prob/Stat team chose this population because improving preterm health care is a relevant and current public health problem particularly in underserved populations. 
+
+
+
+\newpage
+
+
+3. [2 marks] What is the sampling frame used to collect the data you are using? Describe why you think
+this sampling strategy is appropriate for your question. To what group(s) would you feel comfortable
+generalizing the findings of your study and why.
+
+
+The sampling frame included very preterm infants born between January 2008 and April 2014 at the Santa Clara Valley Medical Center. The sample included a total n of 353 infants, 187 in group 30-45 seconds DCC and 166 in group 60-75 seconds DCC. 30-45 seconds group was done from 2008-2011 and 60-75 seconds group was done from 2011-2014. This sampling strategy was appropriate because the sample was large enough to meet pre-calculated
+ power requirements and included very preterm infants which is the population that we wanted to study. Additionally, there were no significant differences in baseline demographic characteristics between the exposed group (60-75 seconds DCC) and unexposed group (30-45 seconds group), allowing improved comparison between outcomes with respect to interventions. The findings of this study would likely generalize to other very preterm infants spontaneously breathing at birth in a hospital setting with a level III NICU in the United States, but more studies are warranted to confirm these results. It is unclear whether these findings would generalize to outside the hospital setting, e.g. home births, given there could be confounding variables from other interventions in the hospital setting that were not analyzed.
+
+
+
+\newpage
+
+4. [2 marks] Write a brief description (1-4 sentences) of the source and contents of your dataset. Provide a
+URL to the original data source if applicable. If not (e.g., the data came from your internship), provide
+1-2 sentences saying where the data came from. If you completed a web form to access the data and
+selected a subset, describe these steps (including any options you selected) and the date you accessed
+the data.
+
+Data is available through paper citation  https://www-ncbi-nlm-nih-gov.proxy.lib.uiowa.edu/pmc/articles/PMC4577121/pdf/pone.0138829.pdf 
+or directly through this website https://datadryad.org/stash/dataset/doi:10.5061/dryad.4q3d3
+
+The data came from a prospective clinical study performed in the Santa Clara Valley Medical Center, as described above, that was published in PLOS One. The hospital had developed a standardized delivery room management “bundle” or protocol in 2007 prior to the start of this study. Very preterm infants spontaneously breathing at birth were managed using this bundle with the only difference in this study being timing of delayed cord clamping, 30-45 seconds from Jan 2008-March 2011, or 60-75 seconds from March 2011-April 2014; in that way, the infants were randomized. The dataset falls into three categories: demographics, cord clamping (30-45 seconds group vs 60-75 seconds group) and neonatal outcomes data. There were no significant differences between the two infant groups with respect to gestational age, body weight at birth, receiving antenatal steroids, birth by Caesarian section, or percentage of male sex. Outcomes (as described above) were identified for each patient during their hospitalization.
+
+
+
+\newpage
+
+
+5. [1 mark] Write code below to import your data into R. Assign your dataset to an object.
+
+
+Loading data: 
+
+```{r load}
+
+library(readxl)
+library(dplyr)
+song = read_xlsx("Song_DCC_PlosOne_datadryad9.16.15.xlsx")
+#View(song)
+```
+
+
+Optional part, poking around the data to get the lay of the land
+
+```{r feeling the data}
+#summary(song)
+str(song)
+set.seed(123)    # seed the pseudo random number generator, so we have consistent result between runs.
+```
+
+\newpage
+
+
+6. [3 marks] Use code in R to answer the following questions:
+i) What are the dimensions of the dataset?
+
+
+```{r data_dim}
+dim(song)
+```
+
+Answer provided by R: 353 rows, 36 columns.
+
+
+ii) Provide a list of variable names.
+
+
+The variables are listed in the docx that came with the data:
+data access: 
+
+SongDCC_PlosOne_datadryad9.16.15 ReadMe File
+
+Studyid	
+Bw – birth weight in grams
+Ga – gestational age in weeks at birth
+Dcc – delayed cord clamping, 1=yes, 0=no
+Groups-study groups (1=DCC 30-45s, 2=DCC 60-75s)
+Sex – 1= female, 2=male
+Multiples = multiple pregnancy, 1=yes, 0=no
+Inoutborn – 1=inborn
+ans – antenatal steroids, 1=yes, 0=no
+ans48 – antenatal steroids >48hours prior to delivery, 1=yes, 0=no
+vag – vaginal delivery, 1=yes, 0=no
+apgar1 – 1 minute apgar
+apgar5 – 5 minute apgar
+etippv – delivery room intubation and positive pressure ventilation, 1=yes, 0=no
+drccompmeds – delivery room chest compressions and/or resuscitation medications, 1=yes, 0=no
+atemp – admission temperature in Celsius
+hypothermia - <36 degree Celsius on admission, 1=yes, 0=no
+hct2 – hematocrit in the first 2 hours of life
+hct1236 – hematocrit between 12-36 hours of life
+surfactant - 1=yes, 0=no
+pneumothorax - 1=yes, 0=no
+intub1d – intubation within 24 hours of life, 1=yes, 0=no
+anyintub – intubation any time during the NICU stay, 1=yes, 0=no
+anytransfusion – any pRBC transfusion during the NICU stay, 1=yes, 0=no
+pkbili – peak bilirubin, mg/dl
+polycythemia – hematocrit >65, 1=yes, 0=no
+died - 1=yes, 0=no	
+anyivh – any intraventricular hemorrhage (grade 1-4), 1=yes, 0=no
+sevivh – severe intraventricular hemorrhage (grade 3 or 4), 1=yes, 0=no
+los	 - late onset sepsis, 1=yes, 0=no
+anyrop – retinopathy of prematurity (stage 1-3), 1=yes, 0=no
+severerop-severe retinopathy of prematurity (grade 3 or threshold disease or received anti VEGF treatment or laser treatment for ROP), 1=yes, 0=no
+anynec – necrotizing enterocolitis, 1=yes, 0=no
+anycld- chronic lung disease, 1=yes, 0=no
+survwithoutmajormorbidity – survival without severe intraventricular hemorrhage, severe retinopathy of prematurity, late onset sepsis, necrotizing enterocolitis or chronic lung disease, 1=yes, 0=no
+
+
+```{r var_list}
+colnames(song)
+```
+
+iii) Print the first six rows of the dataset.
+
+```{r first_six_rows}
+head(song,6)
+```
+
+\newpage
+
+7. [4 marks] Use the data to demonstrate a statistical concept from Part I of the course. Describe the
+concept that you are demonstrating and interpret the findings. This should be a combination of code
+and written explanation.
+
+We hypothesized that birth weight and gestational age would have a direct positive correlation. Both of these are continuous variables, as such, we made scatter plots and performed linear regressions to identify if a linear model applied to this data. We also converted the variables to a log scale to improve the visualization of the relationship.  What we found is that converting  birth weight to a log scale yielded a slightly better R-squared correlation score than leaving it in linear scale.  This is not a huge improvement, since R^2 was still only at about 0.69, but the data points in the XY scatter plots does seem to have a more uniform spread from the lm() abline in this case.
+
+For future parts of the project, we will evaluate other relationships of the data and further investigate birth weight, gestational period, delayed cord clamping and preterm outcome. 
+
+
+```{r plot}
+
+library(ggplot2)
+library(tidyverse)
+library(broom)
+library(gridExtra)  # provides the grid.arrange() fn to display multiple plots on same graph
+
+song_lm         = lm(     bw  ~     ga,  song )
+song_lm_logbw   = lm( log(bw) ~     ga,  song )
+song_lm_logga   = lm(     bw  ~ log(ga), song )
+
+icept = song_lm$coefficients[[1]]
+slp   = song_lm$coefficients[[2]]
+icept_logbw   = song_lm_logbw$coefficients[[1]]
+slp_logbw     = song_lm_logbw$coefficients[[2]]
+icept_logga   = song_lm_logga$coefficients[[1]]
+slp_logga     = song_lm_logga$coefficients[[2]]
+
+rsq         <- glance( song_lm         ) %>% pull(r.squared) %>% round(4)
+rsq_logbw   <- glance( song_lm_logbw   ) %>% pull(r.squared) %>% round(4)
+rsq_logga   <- glance( song_lm_logga   ) %>% pull(r.squared) %>% round(4)
+
+xy = ggplot( data=song, aes(x=ga, y=bw)) +  geom_point() +
+  geom_abline( intercept=icept,     slope=slp,     col="blue",  lty=2 ) + 
+  labs( title=paste("R²=", rsq ), x="Gestation (week)", y="Birth Weight (g)")
+
+xybw   = ggplot( data=song, aes(x=ga, y=log(bw))) +  geom_point() +
+  geom_abline( intercept=icept_logbw, slope=slp_logbw, col="cyan", lty=1 ) +
+  labs( title=paste("R²=", rsq_logbw ), x="Gestation (week)", y="Log of Birth Weight (g)")
+
+xyga   = ggplot( data=song, aes(x=log(ga), y=bw)) +  geom_point() +
+  geom_abline( intercept=icept_logga, slope=slp_logga, col="green", lty=1 ) +
+  labs( title=paste("R²=", rsq_logga ), x="Log of Gestation (week)", y="Birth Weight (g)")
+
+grid.arrange(xy,xybw,xyga, nrow=2, top="Gestational Age vs Birth Weight")
+
+```
+
+\newpage
+
+
+
+# Part 2 #######################################################################
+
+
+
+1. [1 mark] Include your work for Part I.
+
+
+_see above :)_
+
+
+\newpage
+
+2. [2 marks] Describe a quantity you will estimate as an outcome in your problem using probability notation. Are you planning to calculate marginal probabilities? Conditional probabilities?
+
+
+We would like to determine the probability that the patient died given s/he was exposed to either of the two different timings of Delayed Cord Clamp procedure (DCC) (Group 1 vs Group 2).  We first create a 2x2 contingency table as:
+
+
+2x2                   |  Death=Yes | Death=No | Margin        |
+----------------------|------------|----------|---------------|
+DCC Group=1 (30-45s)  | A:    9    | B:   178 | A+B:      187 |
+DCC Group=2 (60-75s)  | C:    8    | D:   158 | C+D:      166 |
+Margin                | A+C: 17    | B+D: 336 | A+B+C+D:  353 |
+
+
+
+This is a conditional probability based on exposure to shorter or longer delayed cord clamping. The deaths per groups are shown in the Table above. The probability that a patient died conditionally based on exposure type is :
+
+P( Death=Yes | DccGroup=1 ) = a / (a+b) = 9/187 = 0.04812834 or 4.81%
+
+P( Death=Yes | DccGroup=2 ) = c / (c+d) = 8/166 = 0.04819277 or 4.82%
+
+Overall, we observe that the conditional probability is approximately the same in either group.
+
+
+The R code to query the data to create the 2x2 contingency table is below.
+
+```{r constructing 2x2}
+
+# b, a:
+song      %>% filter( groups == 1 ) %>% group_by( died  )  %>% tally()
+
+# d, c:
+song      %>% filter( groups == 2 ) %>% group_by( died  )  %>% tally()
+
+# a+b, c+d:
+song      %>% group_by( groups  ) %>% tally()
+
+#  b+d, a+c: 
+song      %>% group_by( died    ) %>% tally()
+
+# a+b+c+d
+song %>% tally()
+
+```
+
+\newpage
+
+3. [3 marks] Describe the type of theoretical distribution that is relevant for your data.
+
+• What type of variable(s) are you investigating (continuous, categorical, ordinal, etc)?
+
+I. A variable is any characteristic of an individual. Categorical variables have grouping levels and Quantitative variables are numeric variables. This data set have mainly Quantitative variables such as gestational age (Ga), birth weight (Bw), hematocrit (hct2), etc.  Furthermore, Ga is a Discrete Quantitative variable meaning this variable can be counted. Bw and hct are Continuous Quantitative variables that can be measured precisely. 
+
+\newpage
+
+• What theoretical distribution that we have talked about would potentially be appropriate to use with these data (Normal, Binomial, Poisson. . . )
+
+II. Data can be described using different distributions such as Normal, Binomial, and Poisson. Normal distribution is a Continuous Distribution. Binomial and Poisson are Discrete Probability Distributions. 
+For our data set, Normal Distribution would potentially be appropriate to use. We will illustrate later in document.
+
+
+\newpage
+
+• Why is this an appropriate model for the data you are studying?
+
+III. Normal Distribution is appropriate for our analysis of hematocrit levels (hct2), which is a continuous data type. 
+We have mean (µ) and standard deviation (σ) for this data set, thus describing the main statistics for a Normal distribution. To further check whether our hct2 data follows a Normal distribution, we first plotted the data as a histogram.  Visually, the plot looks approximately like a symmetric bell curve, fairly well centered in the middle for mean µ and not skewed.  We acknowledge that there are a few outliers. These may be due to measurement error because the corresponding Hematocrit values would be physiologically improbable. 
+
+
+```{r NormDist-for-group-consideration}
+
+ggplot(data=song, aes(x=hct2)) +  geom_histogram( bins=30 ) 
+
+```
+
+Lastly, we create a QQ plot of the hct2 data, and observes that most points track closely to the main diagonal, with a few points on the extremes that would corresponds to the outliers.  Given that the bulk of the data "fits", we now have further evidence that the data follows a Normal distribution.
+```{r qq plot}
+
+ggplot(data=song, aes(sample=hct2)) + stat_qq() + stat_qq_line()  
+
+```
+
+\newpage
+
+[previous newpage did not take, hopefully didn't introduce a blank page now with a 2nd newpage]
+
+\newpage
+
+4. [4 marks] Use the data you have to demonstrate a statistical concept from Part II of the course. Describe the concept that you are demonstrating and interpret the findings. This may include code in R, a visual of some kind and text interpretation.
+
+
+We want to determine if using longer cord clamping time (for those in group 2) would be associated with a significantly higher mean hematocrit level than the mean of both delayed cord clamping groups combined. Hematocrit is defined as the percentage by volume of packed red blood cells in a given sample of blood after centrifugation.
+
+Statistically, our Null and Alternative Hypotheses are:
+
+H_o:   mean hct2 of group 2 = 48.25    
+
+H_alt: mean hct2 of group 2 > 48.25 
+ 
+Clinically, this is what our hypothesis means:
+ 
+H_o:   mean hct2 of group 2 (longer delayed cord clamping) = mean hct2 of entire group combined (both shorter and longer DCC) = 48.25    
+
+H_alt: mean hct2 of group 2 (longer delayed cord clamping) > 48.25 
+
+This was a one-sided hypothesis test, and we define alpha = 0.05. 
+
+Next we calculate the z-statistic to determine whether the mean of the longer delayed cord clamping group was significantly larger than the mean from the combined group mean.  For this, we used R to identify the means and standard deviation from each group (combined and group 2 alone).
+
+
+
+
+```{r mean_vs_median}
+
+library(dplyr)
+
+cord_clamp_All = song 
+Min    = min(       cord_clamp_All$hct2,               na.rm=T )
+Q1     = quantile(  cord_clamp_All$hct2, probs = 0.25, na.rm=T )
+Median = median(    cord_clamp_All$hct2,               na.rm=T )
+Mean   = mean(      cord_clamp_All$hct2,               na.rm=T )
+Q3     = quantile(  cord_clamp_All$hct2, probs = 0.75, na.rm=T )
+Max    = max(       cord_clamp_All$hct2,               na.rm=T )
+SD     = sd(        cord_clamp_All$hct2,               na.rm=T )
+
+seven_num_summary_All =  c( min    = Min,
+                            Q1     = Q1,
+                            median = Median,
+                            mean   = Mean,
+                            sd     = SD,
+                            Q3     = Q3,
+                            max    = Max)
+
+
+cord_clamp_G2 = song %>% filter(groups==2)
+Min    = min(       cord_clamp_G2$hct2,               na.rm=T )
+Q1     = quantile(  cord_clamp_G2$hct2, probs = 0.25, na.rm=T )
+Median = median(    cord_clamp_G2$hct2,               na.rm=T )
+Mean   = mean(      cord_clamp_G2$hct2,               na.rm=T )
+Q3     = quantile(  cord_clamp_G2$hct2, probs = 0.75, na.rm=T )
+Max    = max(       cord_clamp_G2$hct2,               na.rm=T )
+SD     = sd(        cord_clamp_All$hct2,              na.rm=T )
+
+
+seven_num_summary_G2  =  c( min    = Min,
+                            Q1     = Q1,
+                            median = Median,
+                            mean   = Mean,
+                            sd     = SD,
+                            Q3     = Q3,
+                            max    = Max)
+
+
+round( seven_num_summary_All, 2 )
+round( seven_num_summary_G2,  2 ) 
+
+```
+
+From the above, we observe that:
+
+x-bar : 49.19
+
+mu    : 48.25
+
+Sigma : sd = 7.03
+
+n     : 151 (group 2 count - missing data from group 2)
+
+There were 166 patients within the longer delayed group. Fifteen hematocrit values were missing among this group, so our n = 166 - 15 = 151. 
+
+To calculate our z-statistic, we used this equation:
+
+z = ( (x-bar - mu) / (sigma/sqrt(n) ) 
+
+z = (49.19-48.25)/(7.03/sqrt(151))= 1.643089
+
+And then used the pnorm function in R to calculate the p-value:
+
+```{r calculate p-value}
+pnorm(1.643089, mean=0, sd=1, lower.tail=F) 
+
+```
+
+Interpretation:
+
+Our p-value of 0.05018226 does not quite reach our definition of significance because it does not fulfill being less than 0.05. However, we think that it is borderline significant with an alpha of 0.05, meaning that we think there likely is a difference between the shorter and longer delayed cord clamping groups. Another future study with a larger sample size might be warranted to further definitively determine whether there truly is a significant benefit with longer periods of delayed cord clamping. 
+
+\newpage
+
+# =================== PART 3 =========================
+
+```{r part 3 draft}
+#library(pacman)
+#p_load(forcats)
+
+library(forcats)
+
+
+# Lect 5 eg fct_relevel reorder by hand
+# shoe_data <- shoe_data %>% 
+#  mutate(shoe_support = fct_relevel(shoe_support, "good", "average", "poor"))
+
+
+song_ext = na.omit(song) %>%  
+  mutate(  apgar5Cat  =   case_when(       apgar5==0  ~ "Low" , 
+                                           apgar5==1  ~ "Low" , 
+                                           apgar5==2  ~ "Low" , 
+                                           apgar5==3  ~ "Low" , 
+                                           apgar5==4  ~ "Low" , 
+                                           apgar5==5  ~ "Low" , 
+                                           apgar5==6  ~ "Low" , 
+                                           apgar5==7  ~ "Med" , 
+                                           apgar5==8  ~ "Med" , 
+                                           apgar5==9  ~ "High" ,  
+                                           apgar5==10 ~ "High" 
+                                           ) ) %>%
+  mutate( apgar5Cat = fct_relevel( apgar5Cat, "Low", "Med", "High" ))
+
+  
+
+apgarCounts = song_ext %>% count( apgar5Cat )
+# try to add these counts to the plot
+
+
+
+plot3cats = ggplot( data=song_ext, aes(y=hct1236,x=apgar5Cat)) +  geom_boxplot() + geom_jitter(width=0.1) +
+  labs( title=paste("title tbd ²=", apgarCounts ), x="5 minutes Apgar score", y="12-36 hours Hematocrit level")
+#labs( title=paste("title tbd ²=", apgarCounts ), x="x tbd", y="y tbd")
+
+plot3cats
+
+
+aov(hct1236 ~ apgar5Cat, data=song_ext) %>% tidy()
+
+TukeyHSD( aov(hct1236 ~ apgar5Cat, data=song_ext))
+
+
+# for kicker, trying the non parametric version of anova
+# it reports a k-w chi-sq stat, which seems more relatable
+kruskal.test(hct1236 ~ apgar5Cat, data=song_ext) 
+
+
+
+#t.test(song_ext$hct1236,song_ext$apgar5Cat, alternative="two.sided")  
+#t.test only allows for 2 groups
+# below still does not provide SD info.  calc by hand...   
+t.test(song_ext %>% filter(apgar5Cat=="Low") %>% pull(hct1236),
+       song_ext %>% filter(apgar5Cat=="Low") %>% pull(hct1236), 
+       alternative="two.sided")  
+
+
+SD_by_Apgar_Grp = song_ext %>% group_by(apgar5Cat) %>% 
+  summarize( SD = sd(hct1236),
+             n  = length(hct1236))
+SD_by_Apgar_Grp
+
+sd12 = SD_by_Apgar_Grp$SD[1] / SD_by_Apgar_Grp$SD[2]
+sd13 = SD_by_Apgar_Grp$SD[1] / SD_by_Apgar_Grp$SD[3]
+sd23 = SD_by_Apgar_Grp$SD[2] / SD_by_Apgar_Grp$SD[3]
+c(sd12, sd13, sd23)
+
+# Kruskal Wallis non parametric anova?  still need sample size for each SRS n>30.
+
+
+```
+
+\newpage 
+
+Question 3
+
+```{r check for normality}
+
+
+
+## QQ plot
+qq_plot = ggplot(data=song_ext, aes(sample=hct1236)) + stat_qq() + stat_qq_line() + facet_wrap( ~ apgar5Cat) +
+  labs( title="QQ plot for Hematocrit at 12-36 hours by APGAR5 categories", x="TBD", y="residuals")
+
+qq_plot
+
+```
+
+
+# References
+
+... we have at least 2 entries.
+
+++ The song  paper itself
+
+
+Fogarty, M., Osborn, D. A., Askie, L., Seidler, A. L., Hunter, K., Lui, K., Simes, J., & Tarnow-Mordi, W. (2018). Delayed vs early umbilical cord clamping for preterm infants: a systematic review and meta-analysis. American journal of obstetrics and gynecology, 218(1), 1–18. https://doi-org.proxy.lib.uiowa.edu/10.1016/j.ajog.2017.10.231
+
